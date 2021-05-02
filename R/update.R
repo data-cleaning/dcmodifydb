@@ -1,4 +1,11 @@
+#' Extract UPDATE statements
+#'
+#' Extract UPDATE statements from modifier object.
 #' @export
+#' @param x [dcmodify::modifier()] object
+#' @param table table name
+#' @param con optional connection
+#' @return `list` of sql UPDATE statements.
 modifier_to_sql <- function(x, table, con = NULL){
   stopifnot(inherits(x, "modifier"))
   tc <- get_table_con(table, con, copy=FALSE)
@@ -6,6 +13,7 @@ modifier_to_sql <- function(x, table, con = NULL){
   lapply(asgn, update_stmt, table=tc$table, con=tc$con)
 }
 
+#' @importFrom dbplyr translate_sql build_sql sql
 update_stmt <- function(x, table, con, ..., na.condition=FALSE){
   if (!is_assignment(x)){
     return(NULL)
@@ -37,7 +45,7 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
 #'
 #' Writes generates sql to file
 #' @export
-#' @param x [modifier()] object with rules to be written
+#' @param x [dcmodify::modifier()] object with rules to be written
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
 #' @param con optional, when `table` is a character a dbi connection.
 #' @param file to which the sql will be written.

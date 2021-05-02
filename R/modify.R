@@ -3,6 +3,9 @@
 #' test
 #'
 #' @importFrom dcmodify modify
+#' @param dat [tbl_dbi()] object, table in a DBI database
+#' @param x [dcmodify::modifier()] object.
+#' @param ... unused
 #' @export
 setMethod("modify", signature("ANY", "modifier"), function(dat, x, ...){
   if (inherits(dat, "tbl_dbi")){
