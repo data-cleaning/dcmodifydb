@@ -33,6 +33,14 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
            )
 }
 
+#' Write generate sql
+#'
+#' Writes generates sql to file
+#' @export
+#' @param x [modifier()] object with rules to be written
+#' @param table either a [dplyr::tbl()] object or a `character` with table name
+#' @param con optional, when `table` is a character a dbi connection.
+#' @param file to which the sql will be written.
 dump_sql <- function(x, table, con = NULL, file = stdout()){
   sql <- modifier_to_sql(x, table, con)
   nms <- names(x)

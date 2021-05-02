@@ -16,6 +16,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 3.0.0)
+Remotes:
+  data-cleaning/dcmodify/pkg@rewrite
 Imports: 
     dplyr,
     dbplyr,

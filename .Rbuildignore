@@ -1,3 +1,5 @@
 ^dcmodifydb\.Rproj$
 ^\.Rproj\.user$
 ^example$
+^\.github$
+^README\.Rmd$
