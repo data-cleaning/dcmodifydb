@@ -2,7 +2,7 @@
 #'
 #' Extract UPDATE statements from modifier object.
 #' @export
-#' @param x [dcmodify::modifier()] object
+#' @param x `dcmodify::modifier()` object
 #' @param table table name
 #' @param con optional connection
 #' @return `list` of sql UPDATE statements.
@@ -45,7 +45,7 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
 #'
 #' Writes generates sql to file
 #' @export
-#' @param x [dcmodify::modifier()] object with rules to be written
+#' @param x `dcmodify::modifier()` object with rules to be written
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
 #' @param con optional, when `table` is a character a dbi connection.
 #' @param file to which the sql will be written.

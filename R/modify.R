@@ -4,7 +4,7 @@
 #'
 #' @importFrom dcmodify modify
 #' @param dat [tbl_dbi()] object, table in a DBI database
-#' @param x [dcmodify::modifier()] object.
+#' @param x `dcmodify::modifier()` object.
 #' @param ... unused
 #' @export
 setMethod("modify", signature("ANY", "modifier"), function(dat, x, ...){

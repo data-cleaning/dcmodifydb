@@ -7,7 +7,7 @@
 modifier_to_sql(x, table, con = NULL)
 }
 \arguments{
-\item{x}{\code{\link[dcmodify:modifier]{dcmodify::modifier()}} object}
+\item{x}{\code{dcmodify::modifier()} object}
 
 \item{table}{table name}
 

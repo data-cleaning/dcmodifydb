@@ -1,13 +1,15 @@
 Package: dcmodifydb
-Title: Modifying rules on db
-Version: 0.0.0.9000
+Title: Modifying Rules on a DataBase
+Version: 0.1.0.9000
 Authors@R: 
     person(given = "Edwin",
            family = "de Jonge",
            role = c("aut", "cre"),
            email = "edwindjonge@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           comment = c(ORCID = "0000-0002-6580-4718"))
+Description: Apply modification rules from R package 'dcmodify' to the database, 
+  prescribing and documenting deterministic data cleaning steps on records in a database.
+  The rules are translated into SQL statements using R package 'dbplyr'.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

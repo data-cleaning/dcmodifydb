@@ -7,7 +7,7 @@
 dump_sql(x, table, con = NULL, file = stdout())
 }
 \arguments{
-\item{x}{\code{\link[dcmodify:modifier]{dcmodify::modifier()}} object with rules to be written}
+\item{x}{\code{dcmodify::modifier()} object with rules to be written}
 
 \item{table}{either a \code{\link[dplyr:tbl]{dplyr::tbl()}} object or a \code{character} with table name}
 

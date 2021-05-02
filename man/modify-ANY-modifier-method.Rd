@@ -9,7 +9,7 @@
 \arguments{
 \item{dat}{\code{\link[=tbl_dbi]{tbl_dbi()}} object, table in a DBI database}
 
-\item{x}{\code{\link[dcmodify:modifier]{dcmodify::modifier()}} object.}
+\item{x}{\code{dcmodify::modifier()} object.}
 
 \item{...}{unused}
 }

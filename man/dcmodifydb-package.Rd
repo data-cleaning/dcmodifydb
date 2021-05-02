@@ -4,12 +4,14 @@
 \name{dcmodifydb-package}
 \alias{dcmodifydb}
 \alias{dcmodifydb-package}
-\title{dcmodifydb: Modifying rules on db}
+\title{dcmodifydb: Modifying Rules on a DataBase}
 \description{
-What the package does (one paragraph).
+Apply modification rules from R package 'dcmodify' to the database, 
+  prescribing and documenting deterministic data cleaning steps on records in a database.
+  The rules are translated into SQL statements using R package 'dbplyr'.
 }
 \author{
-\strong{Maintainer}: Edwin de Jonge \email{edwindjonge@gmail.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Edwin de Jonge \email{edwindjonge@gmail.com} (\href{https://orcid.org/0000-0002-6580-4718}{ORCID})
 
 }
 \keyword{internal}
