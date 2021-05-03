@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test — modify,ANY,modifier-method • dcmodifydb</title>
+<title>Modify records in a tbl — modify,ANY,modifier-method • dcmodifydb</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Test — modify,ANY,modifier-method" />
-<meta property="og:description" content="test" />
+<meta property="og:title" content="Modify records in a tbl — modify,ANY,modifier-method" />
+<meta property="og:description" content="Modify records in a database table using modification rules specified
+in a modifier object." />
 
 
 
@@ -103,28 +104,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Test</h1>
+    <h1>Modify records in a tbl</h1>
     
     <div class="hidden name"><code>modify-ANY-modifier-method.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>test</p>
+    <p>Modify records in a database table using modification rules specified
+in a modifier object.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for ANY,modifier</span>
-<span class='fu'>modify</span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>modify</span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>x</span>, copy <span class='op'>=</span> <span class='cn'>NULL</span>, transaction <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/Logic.html'>isTRUE</a></span><span class='op'>(</span><span class='va'>copy</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dat</th>
-      <td><p><code>tbl_dbi()</code> object, table in a DBI database</p></td>
+      <td><p><code>tbl_sql()</code> object, table in a SQL database</p></td>
     </tr>
     <tr>
       <th>x</th>
       <td><p><code>dcmodify::modifier()</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>copy</th>
+      <td><p>if <code>TRUE</code> (default), modify copy of table</p></td>
+    </tr>
+    <tr>
+      <th>transaction</th>
+      <td><p>if <code>TRUE</code> use one transaction for all modificationṡ.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -132,7 +142,34 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>The modification rules are translated into SQL update statements
+and executed on the table.
+Note that</p><ul>
+<li><p>by default the updates are executed on a copy of the table.</p></li>
+<li><p>the default for <code>transaction</code> is <code>FALSE</code> when <code>copy=TRUE</code> and
+<code>TRUE</code> when <code>copy=FALSE</code></p></li>
+<li><p>when <code>transaction = TRUE</code> and a modification fails,
+all modifications are rolled back.</p></li>
+</ul>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dbi.r-dbi.org'>DBI</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/data-cleaning/dcmodify'>dcmodify</a></span><span class='op'>)</span>
+
+<span class='co'># silly modification rule</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'>modifier</span><span class='op'>(</span><span class='kw'>if</span> <span class='op'>(</span><span class='va'>cyl</span> <span class='op'>==</span> <span class='fl'>6</span><span class='op'>)</span> <span class='va'>gear</span> <span class='op'>&lt;-</span> <span class='fl'>10</span><span class='op'>)</span>
+
+<span class='va'>con</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='op'>(</span><span class='fu'>RSQLite</span><span class='fu'>::</span><span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://dbi.r-dbi.org/reference/dbWriteTable.html'>dbWriteTable</a></span><span class='op'>(</span><span class='va'>con</span>, <span class='st'>"mtcars"</span>, <span class='va'>mtcars</span><span class='op'>)</span>
+<span class='va'>tbl_mtcars</span> <span class='op'>&lt;-</span> <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/tbl.html'>tbl</a></span><span class='op'>(</span><span class='va'>con</span>, <span class='st'>"mtcars"</span><span class='op'>)</span>
+<span class='va'>tbl_m</span> <span class='op'>&lt;-</span> <span class='fu'>modify</span><span class='op'>(</span><span class='va'>tbl_mtcars</span>, <span class='va'>m</span>, copy<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in random_name(table_name): could not find function "random_name"</span></div><div class='input'>
+<span class='fu'><a href='https://dbi.r-dbi.org/reference/dbDisconnect.html'>dbDisconnect</a></span><span class='op'>(</span><span class='va'>con</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
