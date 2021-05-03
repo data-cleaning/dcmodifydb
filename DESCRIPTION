@@ -26,3 +26,4 @@ Imports:
     DBI,
     dcmodify (>= 0.1.9),
     methods
+URL: https://data-cleaning.github.io/dcmodifydb
