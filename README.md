@@ -10,7 +10,9 @@ status](https://www.r-pkg.org/badges/version/dcmodifydb)](https://CRAN.R-project
 [![R-CMD-check](https://github.com/data-cleaning/dcmodifydb/workflows/R-CMD-check/badge.svg)](https://github.com/data-cleaning/dcmodifydb/actions)
 <!-- badges: end -->
 
-The goal of dcmodifydb is to …
+The goal of dcmodifydb is to apply modification rules specified with
+`dcmodify` on a database table, allowing for documented, reproducable
+data cleaning adjustments in a database.
 
 ## Installation
 

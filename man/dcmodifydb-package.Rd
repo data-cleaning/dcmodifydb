@@ -13,7 +13,8 @@ Apply modification rules from R package 'dcmodify' to the database,
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://data-cleaning.github.io/dcmodifydb}
+  \item \url{https://github.com/data-cleaning/dcmodifydb}
+  \item Report bugs at \url{https://github.com/data-cleaning/dcmodifydb/issues}
 }
 
 }
