@@ -3,6 +3,7 @@
 ^example$
 ^\.github$
 ^README\.Rmd$
+^README\.md$
 ^LICENSE\.md$
 ^_pkgdown\.yml$
 ^docs$

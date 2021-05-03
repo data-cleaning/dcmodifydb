@@ -10,7 +10,7 @@ modifier_to_sql <- function(x, table, con = NULL){
   stopifnot(inherits(x, "modifier"))
   tc <- get_table_con(table, con, copy=FALSE)
   asgn <- x$assignments()
-  lapply(asgn, update_stmt, table=tc$table, con=tc$con)
+  lapply(asgn, update_stmt, table=tc$table_name, con=tc$con)
 }
 
 #' @importFrom dbplyr translate_sql build_sql sql
@@ -60,9 +60,14 @@ dump_sql <- function(x, table, con = NULL, file = stdout()){
 }
 
 get_table_con <- function(table, con = NULL, copy = NULL){
-  if (inherits(table, "tbl_dbi")){
+  if (inherits(table, "tbl_sql")){
     if (!missing(con) && !is.null(con)){
       warning("ignoring `con`, taking connection from `table`", call. = FALSE)
+    }
+
+    if (is.null(dbplyr::remote_name(table))){
+      # this is a query, so will be stored in a temporary table
+      copy <- TRUE
     }
 
     if (is.na(copy) || is.null(copy)){
@@ -70,13 +75,18 @@ get_table_con <- function(table, con = NULL, copy = NULL){
       copy <- TRUE
     }
 
+    table_name <- dbplyr::remote_name(table)
+
     if (isTRUE(copy)){
-      table <- dplyr::compute(table)
+      table_name <- random_name(table_name)
+      table <- dplyr::compute(table, name = table_name)
     }
-    con <- table$src$con
-    table <- table$ops$x
+    con <- dbplyr::remote_con(table)
+  } else {
+    table_name <- table
+    table <- dplyr::tbl(con, table)
   }
-  list(table = table, con = con)
+  list(table = table, con = con, table_name = table_name)
 }
 
 # simple approach write all assignments as update sql statements

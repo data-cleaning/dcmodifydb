@@ -2,17 +2,49 @@
 % Please edit documentation in R/modify.R
 \name{modify,ANY,modifier-method}
 \alias{modify,ANY,modifier-method}
-\title{Test}
+\title{Modify records in a tbl}
 \usage{
-\S4method{modify}{ANY,modifier}(dat, x, ...)
+\S4method{modify}{ANY,modifier}(dat, x, copy = NULL, transaction = !isTRUE(copy), ...)
 }
 \arguments{
-\item{dat}{\code{\link[=tbl_dbi]{tbl_dbi()}} object, table in a DBI database}
+\item{dat}{\code{\link[=tbl_sql]{tbl_sql()}} object, table in a SQL database}
 
 \item{x}{\code{dcmodify::modifier()} object.}
+
+\item{copy}{if \code{TRUE} (default), modify copy of table}
+
+\item{transaction}{if \code{TRUE} use one transaction for all modificationṡ.}
 
 \item{...}{unused}
 }
 \description{
-test
+Modify records in a database table using modification rules specified
+in a modifier object.
+}
+\details{
+The modification rules are translated into SQL update statements
+and executed on the table.
+Note that
+\itemize{
+\item by default the updates are executed on a copy of the table.
+\item the default for \code{transaction} is \code{FALSE} when \code{copy=TRUE} and
+\code{TRUE} when \code{copy=FALSE}
+\item when \code{transaction = TRUE} and a modification fails,
+all modifications are rolled back.
+}
+}
+\examples{
+library(DBI)
+library(dcmodify)
+
+# silly modification rule
+m <- modifier(if (cyl == 6) gear <- 10)
+
+con <- dbConnect(RSQLite::SQLite())
+
+dbWriteTable(con, "mtcars", mtcars)
+tbl_mtcars <- dplyr::tbl(con, "mtcars")
+tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
+
+dbDisconnect(con)
 }
