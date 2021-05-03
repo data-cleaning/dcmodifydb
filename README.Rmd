@@ -38,3 +38,7 @@ devtools::install_github("data-cleaning/dcmodifydb")
 ```
 ## Example
 
+
+```{r, code = readLines("./example/modify.R")}
+```
+
