@@ -54,7 +54,7 @@ dump_sql <- function(x, table, con = NULL, file = stdout()){
   # This does not work well when there are multiple assignment per
   # expression
   nms <- names(x)
-  desc <- gsub("\n", "\n-- ", description(x))
+  desc <- gsub("\n", "\n-- ", dcmodify::description(x))
   i <- nchar(desc) > 0
   desc[i] <- paste0("\n-- ", desc[i])
   sql <- paste0("\n-- ", nms, ":"
@@ -63,7 +63,7 @@ dump_sql <- function(x, table, con = NULL, file = stdout()){
                )
 
   version <- utils::packageVersion("dcmodifydb")
-  org <- paste0("'",unique(origin(x)),"'", collapse = " ,")
+  org <- paste0("'",unique(dcmodify::origin(x)),"'", collapse = " ,")
 
   front <- paste0("-- ", c(
     "-------------------------------------",
