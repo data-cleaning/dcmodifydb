@@ -49,21 +49,32 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
 #' @param con optional, when `table` is a character a dbi connection.
 #' @param file to which the sql will be written.
+#' @importFrom validate description label origin
 dump_sql <- function(x, table, con = NULL, file = stdout()){
   sql <- modifier_to_sql(x, table, con)
 
   # This does not work well when there are multiple assignments per
-  # expression
+  # expression, TODO write expression!
   nms <- names(x)
-  desc <- gsub("\n", "\n-- ", dcmodify::description(x))
+  desc <- gsub("\n", "\n-- ", description(x))
   i <- nchar(desc) > 0
   desc[i] <- paste0("\n-- ", desc[i])
-  sql <- paste0("\n-- ", nms, ":", dcmodify::label(x)
-               , desc, "\n"
+
+  comments <- sql_comment( "\n", names(x), ": ", label(x)
+                         , "\n", description(x)
+                         )
+
+  names(comments) <- names(x)
+
+  comments <- comments[names(sql)]
+  comments[is.na(comments)] <- ""
+
+  sql <- paste0( comments
+               , "\n"
                , sql
                )
 
-  org <- paste0("'",unique(dcmodify::origin(x)),"'", collapse = " ,")
+  org <- paste0("'",unique(origin(x)),"'", collapse = " ,")
 
   front <- paste0("-- ", c(
     "-------------------------------------",

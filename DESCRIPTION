@@ -26,6 +26,7 @@ Imports:
     dbplyr,
     DBI,
     dcmodify (>= 0.1.9),
-    methods
+    methods, 
+    validate
 URL: https://github.com/data-cleaning/dcmodifydb
 BugReports: https://github.com/data-cleaning/dcmodifydb/issues
