@@ -51,10 +51,34 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
 #' @param file to which the sql will be written.
 dump_sql <- function(x, table, con = NULL, file = stdout()){
   sql <- modifier_to_sql(x, table, con)
+  # This does not work well when there are multiple assignment per
+  # expression
   nms <- names(x)
-  sql <- paste0("\n-- ", nms, "\n", sql)
+  desc <- gsub("\n", "\n-- ", description(x))
+  i <- nchar(desc) > 0
+  desc[i] <- paste0("\n-- ", desc[i])
+  sql <- paste0("\n-- ", nms, ":"
+               , desc, "\n"
+               , sql
+               )
 
-  sql <- c("-- Generated with dcmodify version . from .\n\n", sql)
+  version <- utils::packageVersion("dcmodifydb")
+  org <- paste0("'",unique(origin(x)),"'", collapse = " ,")
+
+  front <- paste0("-- ", c(
+    "-------------------------------------",
+    "Generated with dcmodify, do not edit",
+    sprintf("dcmodifydb version: %s", version),
+    sprintf("from: %s", org),
+    sprintf("date: %s", Sys.Date()),
+    "-------------------------------------"
+  ))
+
+  sql <- c(
+    front
+    , "\n"
+    , sql
+    )
   writeLines(sql)
   invisible(sql)
 }
