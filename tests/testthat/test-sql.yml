@@ -1,0 +1,9 @@
+rules:
+- expr: if (x > 1) x <- 1
+  name: M1
+  label: 'simple rule'
+  description: >
+    Description of this modification rule
+    Can span multiple lines.
+
+
