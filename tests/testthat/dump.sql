@@ -1,15 +1,16 @@
 -- -------------------------------------
--- Generated with dcmodify, do not edit
+-- Generated with dcmodifydb, do not edit
+-- dcmodify version: 0.1.9
 -- dcmodifydb version: 0.1.0.9000
--- from: 'command-line'
+-- from: 'test-sql.yml'
 -- date: 2021-05-04
 -- -------------------------------------
 
 
 
--- M1:
--- Nonsense
--- !!!!
+-- M1:simple rule
+-- Description of this modification rule Can span multiple lines.
+-- 
 UPDATE `ds`
 SET 'x' = 1.0
 WHERE `x` > 1.0;
