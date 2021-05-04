@@ -28,7 +28,7 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
     where <- do.call(translate_sql, list(g, con = con))
     where <- build_sql("WHERE ", where, con = con)
     if (isTRUE(na.condition)){
-      where <- build_sql("COALESCE(",where,"TRUE)")
+      where <- build_sql("COALESCE(",where,"1)")
     }
   }
 
