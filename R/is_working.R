@@ -8,7 +8,7 @@
 #' @return `logical with which statements are working`
 is_working_db <- function(updates, tab, n = 2){
   # take the top 2 of the table
-  tab <- head(tab, n)
+  tab <- utils::head(tab, n)
   tc <- get_table_con(tab, copy = TRUE)
 
   con <- tc$con
