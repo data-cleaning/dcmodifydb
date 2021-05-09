@@ -134,6 +134,15 @@
 <span class="co">#&gt; 6     6    10</span>
 
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
+<div id="documented-rules" class="section level3">
+<h3 class="hasAnchor">
+<a href="#documented-rules" class="anchor"></a>Documented rules</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; ```</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt; rules: - expr: if (age &gt; 130) age &lt;- 130   name: M1   label: 'Maximum age'   description: |     Ages above 130 are clearly an error in this data set - expr: if (age &lt; 12) {income &lt;- 0}   name: M2   label: 'No Child Labor'   description: |     Children should not work, so have no income.</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; </span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; ```</span></span></code></pre></div>
+</div>
 </div>
 </div>
   </div>
