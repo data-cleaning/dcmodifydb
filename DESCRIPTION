@@ -20,7 +20,7 @@ Suggests:
     RSQLite,
     covr
 Remotes:
-  data-cleaning/dcmodify/pkg@rewrite
+  data-cleaning/dcmodify/pkg
 Imports: 
     dplyr,
     dbplyr,

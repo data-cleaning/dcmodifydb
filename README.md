@@ -79,3 +79,11 @@ head(tbl_m)
 
 dbDisconnect(con)
 ```
+
+### Documented rules
+
+    #> 
+    #> ```
+    #> rules: - expr: if (age > 130) age <- 130   name: M1   label: 'Maximum age'   description: |     Ages above 130 are clearly an error in this data set - expr: if (age < 12) {income <- 0}   name: M2   label: 'No Child Labor'   description: |     Children should not work, so have no income.
+    #> 
+    #> ```

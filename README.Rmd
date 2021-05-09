@@ -45,3 +45,14 @@ devtools::install_github("data-cleaning/dcmodifydb")
 ```{r, code = readLines("./example/modify.R")}
 ```
 
+
+### Documented rules
+
+```{r, results='markup', echo=FALSE}
+ex <- readLines("example/example.yml")
+cat("\n```\n")
+cat(ex)
+cat("\n```\n")
+
+```
+
