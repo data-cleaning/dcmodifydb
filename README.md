@@ -82,8 +82,66 @@ dbDisconnect(con)
 
 ### Documented rules
 
-    #> 
-    #> ```
-    #> rules: - expr: if (age > 130) age <- 130   name: M1   label: 'Maximum age'   description: |     Ages above 130 are clearly an error in this data set - expr: if (age < 12) {income <- 0}   name: M2   label: 'No Child Labor'   description: |     Children should not work, so have no income.
-    #> 
-    #> ```
+``` r
+library(DBI)
+library(dcmodify)
+library(dcmodifydb)
+con <- dbConnect(RSQLite::SQLite())
+```
+
+You can use YAML to store the modification rules: “modify.yml”
+
+``` yaml
+rules:
+- expr: if (age > 130) age <- 130
+  name: M1
+  label: 'human age'
+  description: |
+    Human ages above 130 are inplausible
+- expr: if (age < 15) {income <- 0}
+  name: M2
+  label: 'Child labor'
+  description: |
+    A child should not work and earn money.
+```
+
+``` r
+m <- modifier(.file = "modify.yml")
+```
+
+``` r
+"age, income
+  11,   2000
+ 150,    300
+  25,   2000
+" -> csv
+income <- read.csv(text = csv, strip.white = TRUE)
+dbWriteTable(con, "income", income)
+tbl_income <- dplyr::tbl(con, "income")
+
+tbl_income
+#> # Source:   table<income> [?? x 2]
+#> # Database: sqlite 3.35.5 []
+#>     age income
+#>   <int>  <int>
+#> 1    11   2000
+#> 2   150    300
+#> 3    25   2000
+modify(tbl_income, m)
+#> Warning: `copy` not specified, setting `copy=TRUE`, working on copy of table.
+#> # Source:   lazy query [?? x 2]
+#> # Database: sqlite 3.35.5 []
+#>     age income
+#>   <int>  <int>
+#> 1    11      0
+#> 2   130    300
+#> 3    25   2000
+dbDisconnect(con)
+```
+
+Note: Modification rules can be written to yaml with `as_yaml` and
+`export_yaml`.
+
+``` r
+dcmodify::export_yaml(m, "cleaning_steps.yml")
+```
