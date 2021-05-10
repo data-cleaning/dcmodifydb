@@ -40,7 +40,7 @@ library(dcmodifydb)
 
 # silly modification rules
 m <- modifier( if (cyl == 6)  gear <- 10
-             , if (cyl == 4)  gear <- 0
+             , gear[cyl == 4] <- 0  # this R syntax works too :-)
              , if (gear == 3) cyl <- 2
              )
 
@@ -161,14 +161,19 @@ dump_sql(m, tbl_income)
 #> 
 #> -- M1: Maximum age
 #> -- Human age is limited.
+#> -- 
+#> -- R expression: if (age > 130) age <- 130
 #> UPDATE `income`
-#> SET `age` = 130.0
+#> SET `age` = 130
 #> WHERE `age` > 130.0;
 #> 
 #> -- M2: No Child Labor
 #> -- Children should not work.
+#> -- R expression: if (age < 12) {
+#> --     income <- 0
+#> -- }
 #> UPDATE `income`
-#> SET `income` = 0.0
+#> SET `income` = 0
 #> WHERE `age` < 12.0;
 ```
 
