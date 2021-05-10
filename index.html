@@ -142,20 +142,20 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodify">dcmodify</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodifydb">dcmodifydb</a></span><span class="op">)</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>You can use YAML to store the modification rules: “modify.yml”</p>
+<p>You can use YAML to store the modification rules: “example.yml”</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">rules</span><span class="kw">:</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &gt; 130) age &lt;- 130</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M1</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'human age'</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'Maximum age'</span></span>
 <span id="cb4-5"><a href="#cb4-5"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>    Human ages above 130 are inplausible</span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &lt; 15) {income &lt;- 0}</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    Human age is limited.</span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &lt; 12) {income &lt;- 0}</span></span>
 <span id="cb4-8"><a href="#cb4-8"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M2</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'Child labor'</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'No Child Labor'</span></span>
 <span id="cb4-10"><a href="#cb4-10"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a>    A child should not work and earn money.</span></code></pre></div>
+<span id="cb4-11"><a href="#cb4-11"></a>    Children should not work.</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">modifier</span><span class="op">(</span>.file <span class="op">=</span> <span class="st">"modify.yml"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">modifier</span><span class="op">(</span>.file <span class="op">=</span> <span class="st">"example.yml"</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="st">"age, income
   11,   2000
@@ -200,14 +200,13 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; -- M1: Maximum age</span>
-<span class="co">#&gt; -- Ages above 130 are clearly an error in this data set</span>
-<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- Human age is limited.</span>
 <span class="co">#&gt; UPDATE `income`</span>
 <span class="co">#&gt; SET `age` = 130.0</span>
 <span class="co">#&gt; WHERE `age` &gt; 130.0;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; -- M2: No Child Labor</span>
-<span class="co">#&gt; -- Children should not work, so have no income.</span>
+<span class="co">#&gt; -- Children should not work.</span>
 <span class="co">#&gt; UPDATE `income`</span>
 <span class="co">#&gt; SET `income` = 0.0</span>
 <span class="co">#&gt; WHERE `age` &lt; 12.0;</span></code></pre></div>
