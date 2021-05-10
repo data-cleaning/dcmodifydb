@@ -190,18 +190,9 @@ all modifications are rolled back.</p></li>
 #&gt; </span><span style='color: #BCBCBC;'>6</span><span>     6     3</div><div class='input'>
 <span class='co'># lets modify on a copy of the table...</span>
 <span class='va'>tbl_m</span> <span class='op'>&lt;-</span> <span class='fu'>modify</span><span class='op'>(</span><span class='va'>tbl_mtcars</span>, <span class='va'>m</span>, copy<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='co'># and gear has changed...</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in ident(varname): could not find function "ident"</span></div><div class='input'><span class='co'># and gear has changed...</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>tbl_m</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #949494;'># Source:   lazy query [?? x 2]</span><span>
-#&gt; </span><span style='color: #949494;'># Database: sqlite 3.35.5 []</span><span>
-#&gt;     cyl  gear
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     6    10
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     6    10
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span>     4     0
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span>     6    10
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span>     2     3
-#&gt; </span><span style='color: #BCBCBC;'>6</span><span>     6    10</div><div class='input'>
+</div><div class='output co'>#&gt; <span class='error'>Error in head(tbl_m): object 'tbl_m' not found</span></div><div class='input'>
 <span class='fu'><a href='https://dbi.r-dbi.org/reference/dbDisconnect.html'>dbDisconnect</a></span><span class='op'>(</span><span class='va'>con</span><span class='op'>)</span>
 </div></span></pre>
   </div>
