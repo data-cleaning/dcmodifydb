@@ -92,7 +92,10 @@ dbWriteTable(con, "income", income)
 tbl_income <- dplyr::tbl(con, "income")
 
 tbl_income
-modify(tbl_income, m)
+modify(tbl_income, m, copy = FALSE)
+```
+
+```{r, eval=FALSE}
 dbDisconnect(con)
 ```
 
@@ -102,3 +105,13 @@ Note: Modification rules can be written to yaml with `as_yaml` and `export_yaml`
 dcmodify::export_yaml(m, "cleaning_steps.yml")
 ```
 
+Generated sql can be written with `dump_sql`
+
+```{r}
+dump_sql(m, tbl_income)
+```
+
+
+```{r, echo = FALSE}
+dbDisconnect(con)
+```

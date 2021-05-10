@@ -127,15 +127,17 @@ tbl_income
 #> 1    11   2000
 #> 2   150    300
 #> 3    25   2000
-modify(tbl_income, m)
-#> Warning: `copy` not specified, setting `copy=TRUE`, working on copy of table.
-#> # Source:   lazy query [?? x 2]
+modify(tbl_income, m, copy = FALSE)
+#> # Source:   table<income> [?? x 2]
 #> # Database: sqlite 3.35.5 []
 #>     age income
 #>   <int>  <int>
 #> 1    11      0
 #> 2   130    300
 #> 3    25   2000
+```
+
+``` r
 dbDisconnect(con)
 ```
 
@@ -144,4 +146,23 @@ Note: Modification rules can be written to yaml with `as_yaml` and
 
 ``` r
 dcmodify::export_yaml(m, "cleaning_steps.yml")
+```
+
+Generated sql can be written with `dump_sql`
+
+``` r
+dump_sql(m, tbl_income)
+#> -- Generated with dcmodify version . from .
+#> 
+#> 
+#> 
+#> -- M1
+#> UPDATE `income`
+#> SET 'age' = 130.0
+#> WHERE `age` > 130.0;
+#> 
+#> -- M2
+#> UPDATE `income`
+#> SET 'income' = 0.0
+#> WHERE `age` < 12.0;
 ```

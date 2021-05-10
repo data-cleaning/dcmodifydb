@@ -15,6 +15,7 @@ modifier_to_sql <- function(x, table, con = NULL){
   lapply(asgn, update_stmt, table=tc$table_name, con=tc$con)
 }
 
+#' @importFrom dbplyr ident ident_q
 alter_stmt <- function(x, table, table_name){
   org_vars <- dplyr::tbl_vars(table)
 
