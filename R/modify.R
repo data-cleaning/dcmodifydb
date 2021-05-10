@@ -37,6 +37,8 @@ modify.tbl_sql <- function(dat, x, ..., copy = NULL, transaction = !isTRUE(copy)
 
   con <- tc$con
   table <- tc$table
+
+  sql_alter <- alter_stmt(x, table, tc$table_name)
   sql_updates <- modifier_to_sql(x, table = tc$table_name, con)
 
   if (isTRUE(transaction)){
@@ -48,8 +50,16 @@ modify.tbl_sql <- function(dat, x, ..., copy = NULL, transaction = !isTRUE(copy)
     })
   }
 
+  #
+
   rows_affected <- numeric(length(sql_updates))
   i <- 0
+
+
+  # first add columns if we need to...
+  for (add_col in sql_alter){
+    DBI::dbExecute(con, add_col)
+  }
 
   for (update in sql_updates){
     DBI::dbExecute(con, update)

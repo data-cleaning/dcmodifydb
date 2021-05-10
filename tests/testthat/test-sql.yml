@@ -1,12 +1,16 @@
 rules:
-- expr: if (x > 1) x <- 1
+- expr: if (age > 130) age <- 130
   name: M1
-  label: 'simple rule'
+  label: 'maximum age'
   description: |
-    Description of this modification rule.
-    Can span multiple lines.
-- expr: if (x > 1) {x <- 1; y <- 2}
+    Age is limited.
+- expr: if (age < 12) {income <- 0; child <- TRUE;}
   name: M2
-  label: 'multiple rules'
+  label: 'Child labor'
   description: |
-    Description of this modification rule.
+    A child should not work.
+- expr: if (income > 0) {workstatus <- "job"}
+  name: M3
+  label: 'has job'
+  description: |
+    Income means job.

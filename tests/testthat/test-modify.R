@@ -51,5 +51,17 @@ describe("modify",{
     expect_equal(as.data.frame(d), data.frame(x = c(1,2)))
   })
 
+  it("adds a new column", {
+    d <- tbl_memdb(data.frame(x = 1:2), "d5")
+    m <- modifier(if (x > 1) y <- "two" else y <- "one")
+    d_m <- modify(d, m, copy=TRUE)
+
+    df <- as.data.frame(d)
+    df_m <- as.data.frame(d_m)
+
+    expect_true("y" %in% names(df_m))
+    expect_equal(df_m$x, df$x)
+    expect_equal(df_m$y,c("one","two"))
+  })
 
 })
