@@ -11,7 +11,7 @@ modifier_to_sql <- function(x, table, con = NULL){
   stopifnot(inherits(x, "modifier"))
   tc <- get_table_con(table, con, copy=FALSE)
 
-  asgn <- x$assignments()
+  asgn <- get_assignments(x)
   lapply(asgn, update_stmt, table=tc$table_name, con=tc$con)
 }
 
@@ -24,8 +24,11 @@ alter_stmt <- function(x, table, table_name){
   con <- dbplyr::remote_con(table)
 
   # collect all assignments
-  vars <- sapply(x$assignments(), function(a) a[[2]], USE.NAMES = FALSE)
-  asgns <- sapply(x$assignments(), function(a) a[[3]])
+  as <- get_assignments(x)
+
+  vars <- sapply(as, function(a) a[[2]], USE.NAMES = FALSE)
+  asgns <- sapply(as, function(a) a[[3]])
+
   names(asgns) <- vars
   mut <- bquote(dplyr::mutate(tab, ..(asgns)), splice = TRUE)
   tab <- eval(mut)
@@ -79,9 +82,9 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
            )
 }
 
-#' Write generate sql
+#' Write generated sql
 #'
-#' Writes generates sql to file
+#' Writes generated sql to file
 #' @export
 #' @param x `dcmodify::modifier()` object with rules to be written
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
@@ -95,15 +98,11 @@ dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
   alt <- alter_stmt(x, tc$table, tc$table_name)
   sql <- modifier_to_sql(x, tc$table)
 
-  # This does not work well when there are multiple assignments per
-  # expression, TODO write expression!
-  nms <- names(x)
-  desc <- gsub("\n", "\n-- ", description(x))
-  i <- nchar(desc) > 0
-  desc[i] <- paste0("\n-- ", desc[i])
+  # TODO write expression!
 
   comments <- sql_comment( "\n", names(x), ": ", label(x)
                          , "\n", description(x)
+                         , "\nR expression: ", validate::expr(x)
                          )
 
   names(comments) <- names(x)

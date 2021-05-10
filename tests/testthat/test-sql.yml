@@ -1,10 +1,10 @@
 rules:
-- expr: if (age > 130) age <- 130
+- expr: if (age > 130) age <- 130L
   name: M1
   label: 'maximum age'
   description: |
     Age is limited.
-- expr: if (age < 12) {income <- 0; child <- TRUE;}
+- expr: if (age < 12) {income <- 0L; child <- TRUE;}
   name: M2
   label: 'Child labor'
   description: |

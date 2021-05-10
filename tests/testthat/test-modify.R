@@ -64,4 +64,25 @@ describe("modify",{
     expect_equal(df_m$y,c("one","two"))
   })
 
+  it("handles selection assign", {
+    d <- tbl_memdb(data.frame(x = 1:2), "d6")
+    m <- modifier(x[x>1] <- 1)
+    d_m <- modify(d, m, copy=TRUE)
+    expect_equal(as.data.frame(d_m), data.frame(x = c(1,1)))
+  })
+
+  it("handles NA assign", {
+    d <- tbl_memdb(data.frame(x = 1:2), "d7")
+    m <- modifier(is.na(x) <- x>1)
+    d_m <- modify(d, m, copy=TRUE)
+    expect_equal(as.data.frame(d_m), data.frame(x = c(1,NA)))
+  })
+
+  it("handles NA check", {
+    d <- tbl_memdb(data.frame(x = c(1,NA)), "d8")
+    m <- modifier(x[is.na(x)] <- 2)
+    d_m <- modify(d, m, copy=TRUE)
+    expect_equal(as.data.frame(d_m), data.frame(x = c(1,2)))
+  })
+
 })

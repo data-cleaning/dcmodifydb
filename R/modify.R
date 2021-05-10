@@ -40,7 +40,6 @@ modify.tbl_sql <- function(dat, x, ..., copy = NULL, transaction = !isTRUE(copy)
 
   sql_alter <- alter_stmt(x, table, tc$table_name)
   sql_updates <- modifier_to_sql(x, table = tc$table_name, con)
-
   if (isTRUE(transaction)){
     DBI::dbBegin(con)
     # if something happens, rollback...
