@@ -20,7 +20,7 @@ alter_stmt <- function(x, table, table_name){
 
   # just for querying meta data
   tab <- utils::head(table, 2)
-  con <- remote_con(table)
+  con <- dbplyr::remote_con(table)
 
   # collect all assignments
   vars <- sapply(x$assignments(), function(a) a[[2]], USE.NAMES = FALSE)
@@ -28,7 +28,7 @@ alter_stmt <- function(x, table, table_name){
   names(asgns) <- vars
   mut <- bquote(dplyr::mutate(tab, ..(asgns)), splice = TRUE)
   tab <- eval(mut)
-  qry <- remote_query(tab)
+  qry <- dbplyr::remote_query(tab)
 
   rs <- DBI::dbSendQuery(con, qry)
   ci <- DBI::dbColumnInfo(rs)

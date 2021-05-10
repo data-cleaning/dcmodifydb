@@ -4,7 +4,7 @@
 \alias{dump_sql}
 \title{Write generate sql}
 \usage{
-dump_sql(x, table, con = NULL, file = stdout())
+dump_sql(x, table, con = NULL, file = stdout(), ...)
 }
 \arguments{
 \item{x}{\code{dcmodify::modifier()} object with rules to be written}
@@ -14,6 +14,8 @@ dump_sql(x, table, con = NULL, file = stdout())
 \item{con}{optional, when \code{table} is a character a dbi connection.}
 
 \item{file}{to which the sql will be written.}
+
+\item{...}{not used}
 }
 \description{
 Writes generates sql to file
