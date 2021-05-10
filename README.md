@@ -137,10 +137,6 @@ modify(tbl_income, m, copy = FALSE)
 #> 3    25   2000
 ```
 
-``` r
-dbDisconnect(con)
-```
-
 Note: Modification rules can be written to yaml with `as_yaml` and
 `export_yaml`.
 
@@ -152,17 +148,31 @@ Generated sql can be written with `dump_sql`
 
 ``` r
 dump_sql(m, tbl_income)
-#> -- Generated with dcmodify version . from .
+#> -- -------------------------------------
+#> -- Generated with dcmodifydb, do not edit
+#> -- dcmodify version: 0.1.9
+#> -- dcmodifydb version: 0.1.0.9000
+#> -- from: 'example/example.yml'
+#> -- date: 2021-05-10
+#> -- -------------------------------------
 #> 
 #> 
 #> 
-#> -- M1
+#> 
+#> -- M1: Maximum age
+#> -- Ages above 130 are clearly an error in this data set
+#> -- 
 #> UPDATE `income`
-#> SET 'age' = 130.0
+#> SET `age` = 130.0
 #> WHERE `age` > 130.0;
 #> 
-#> -- M2
+#> -- M2: No Child Labor
+#> -- Children should not work, so have no income.
 #> UPDATE `income`
-#> SET 'income' = 0.0
+#> SET `income` = 0.0
 #> WHERE `age` < 12.0;
+```
+
+``` r
+dbDisconnect(con)
 ```

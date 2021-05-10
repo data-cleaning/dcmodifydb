@@ -95,10 +95,6 @@ tbl_income
 modify(tbl_income, m, copy = FALSE)
 ```
 
-```{r, eval=FALSE}
-dbDisconnect(con)
-```
-
 Note: Modification rules can be written to yaml with `as_yaml` and `export_yaml`.
 
 ```{r, eval = FALSE}
@@ -112,6 +108,6 @@ dump_sql(m, tbl_income)
 ```
 
 
-```{r, echo = FALSE}
+```{r}
 dbDisconnect(con)
 ```
