@@ -96,7 +96,7 @@
 
 <span class="co"># silly modification rules</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">modifier</span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">6</span><span class="op">)</span>  <span class="va">gear</span> <span class="op">&lt;-</span> <span class="fl">10</span>
-             , <span class="kw">if</span> <span class="op">(</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span>  <span class="va">gear</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+             , <span class="va">gear</span><span class="op">[</span><span class="va">cyl</span> <span class="op">==</span> <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>  <span class="co"># this R syntax works too :-)</span>
              , <span class="kw">if</span> <span class="op">(</span><span class="va">gear</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span> <span class="va">cyl</span> <span class="op">&lt;-</span> <span class="fl">2</span>
              <span class="op">)</span>
 
@@ -201,14 +201,19 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; -- M1: Maximum age</span>
 <span class="co">#&gt; -- Human age is limited.</span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: if (age &gt; 130) age &lt;- 130</span>
 <span class="co">#&gt; UPDATE `income`</span>
-<span class="co">#&gt; SET `age` = 130.0</span>
+<span class="co">#&gt; SET `age` = 130</span>
 <span class="co">#&gt; WHERE `age` &gt; 130.0;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; -- M2: No Child Labor</span>
 <span class="co">#&gt; -- Children should not work.</span>
+<span class="co">#&gt; -- R expression: if (age &lt; 12) {</span>
+<span class="co">#&gt; --     income &lt;- 0</span>
+<span class="co">#&gt; -- }</span>
 <span class="co">#&gt; UPDATE `income`</span>
-<span class="co">#&gt; SET `income` = 0.0</span>
+<span class="co">#&gt; SET `income` = 0</span>
 <span class="co">#&gt; WHERE `age` &lt; 12.0;</span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
