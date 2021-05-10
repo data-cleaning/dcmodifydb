@@ -89,24 +89,24 @@ library(dcmodifydb)
 con <- dbConnect(RSQLite::SQLite())
 ```
 
-You can use YAML to store the modification rules: “modify.yml”
+You can use YAML to store the modification rules: “example.yml”
 
 ``` yaml
 rules:
 - expr: if (age > 130) age <- 130
   name: M1
-  label: 'human age'
+  label: 'Maximum age'
   description: |
-    Human ages above 130 are inplausible
-- expr: if (age < 15) {income <- 0}
+    Human age is limited.
+- expr: if (age < 12) {income <- 0}
   name: M2
-  label: 'Child labor'
+  label: 'No Child Labor'
   description: |
-    A child should not work and earn money.
+    Children should not work.
 ```
 
 ``` r
-m <- modifier(.file = "modify.yml")
+m <- modifier(.file = "example.yml")
 ```
 
 ``` r
@@ -160,14 +160,13 @@ dump_sql(m, tbl_income)
 #> 
 #> 
 #> -- M1: Maximum age
-#> -- Ages above 130 are clearly an error in this data set
-#> -- 
+#> -- Human age is limited.
 #> UPDATE `income`
 #> SET `age` = 130.0
 #> WHERE `age` > 130.0;
 #> 
 #> -- M2: No Child Labor
-#> -- Children should not work, so have no income.
+#> -- Children should not work.
 #> UPDATE `income`
 #> SET `income` = 0.0
 #> WHERE `age` < 12.0;

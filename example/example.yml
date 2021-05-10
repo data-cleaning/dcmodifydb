@@ -3,9 +3,9 @@ rules:
   name: M1
   label: 'Maximum age'
   description: |
-    Ages above 130 are clearly an error in this data set
+    Human age is limited.
 - expr: if (age < 12) {income <- 0}
   name: M2
   label: 'No Child Labor'
   description: |
-    Children should not work, so have no income.
+    Children should not work.

@@ -175,6 +175,8 @@ sql_comment <- function(..., sep = ""){
   x <- paste(..., sep = sep)
   I <- x != ""
   x[I] <- gsub("(^|\n)", "\\1-- ", x[I])
+  # remove empty line
+  x[I] <- gsub("\n-- $", "", x[I])
   x
 }
 

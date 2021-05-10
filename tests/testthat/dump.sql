@@ -14,14 +14,12 @@ ADD COLUMN `workstatus` character;
 
 -- M1: maximum age
 -- Age is limited.
--- 
 UPDATE `ds`
 SET `age` = 130.0
 WHERE `age` > 130.0;
 
 -- M2: Child labor
 -- A child should not work.
--- 
 UPDATE `ds`
 SET `income` = 0.0
 WHERE `age` < 12.0;

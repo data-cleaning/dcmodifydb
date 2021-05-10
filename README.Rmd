@@ -57,24 +57,24 @@ con <- dbConnect(RSQLite::SQLite())
 ```
 
 
-You can use YAML to store the modification rules: "modify.yml"
+You can use YAML to store the modification rules: "example.yml"
 
 ```yaml
 rules:
 - expr: if (age > 130) age <- 130
   name: M1
-  label: 'human age'
+  label: 'Maximum age'
   description: |
-    Human ages above 130 are inplausible
-- expr: if (age < 15) {income <- 0}
+    Human age is limited.
+- expr: if (age < 12) {income <- 0}
   name: M2
-  label: 'Child labor'
+  label: 'No Child Labor'
   description: |
-    A child should not work and earn money.
+    Children should not work.
 ```
 
 ```{r, eval = FALSE}
-m <- modifier(.file = "modify.yml")
+m <- modifier(.file = "example.yml")
 ```
 
 ```{r, echo = FALSE, eval = TRUE}
