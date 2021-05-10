@@ -182,27 +182,37 @@
 <span class="co">#&gt; 1    11      0</span>
 <span class="co">#&gt; 2   130    300</span>
 <span class="co">#&gt; 3    25   2000</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
 <p>Note: Modification rules can be written to yaml with <code>as_yaml</code> and <code>export_yaml</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">dcmodify</span><span class="fu">::</span><span class="fu">export_yaml</span><span class="op">(</span><span class="va">m</span>, <span class="st">"cleaning_steps.yml"</span><span class="op">)</span></code></pre></div>
 <p>Generated sql can be written with <code>dump_sql</code></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/dump_sql.html">dump_sql</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">tbl_income</span><span class="op">)</span>
-<span class="co">#&gt; -- Generated with dcmodify version . from .</span>
+<span class="co">#&gt; -- -------------------------------------</span>
+<span class="co">#&gt; -- Generated with dcmodifydb, do not edit</span>
+<span class="co">#&gt; -- dcmodify version: 0.1.9</span>
+<span class="co">#&gt; -- dcmodifydb version: 0.1.0.9000</span>
+<span class="co">#&gt; -- from: 'example/example.yml'</span>
+<span class="co">#&gt; -- date: 2021-05-10</span>
+<span class="co">#&gt; -- -------------------------------------</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- M1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M1: Maximum age</span>
+<span class="co">#&gt; -- Ages above 130 are clearly an error in this data set</span>
+<span class="co">#&gt; -- </span>
 <span class="co">#&gt; UPDATE `income`</span>
-<span class="co">#&gt; SET 'age' = 130.0</span>
+<span class="co">#&gt; SET `age` = 130.0</span>
 <span class="co">#&gt; WHERE `age` &gt; 130.0;</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; -- M2</span>
+<span class="co">#&gt; -- M2: No Child Labor</span>
+<span class="co">#&gt; -- Children should not work, so have no income.</span>
 <span class="co">#&gt; UPDATE `income`</span>
-<span class="co">#&gt; SET 'income' = 0.0</span>
+<span class="co">#&gt; SET `income` = 0.0</span>
 <span class="co">#&gt; WHERE `age` &lt; 12.0;</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 </div>
