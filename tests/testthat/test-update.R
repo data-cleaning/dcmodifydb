@@ -16,7 +16,7 @@ describe("update",{
     sql <- modifier_to_sql(m, tbl_mtcars)
     expect_equal(sql[[1]], sql(
 "UPDATE `mtcars`
-SET 'carb' = 11.0
+SET `carb` = 11.0
 WHERE `gear` > 3.0;"))
   })
 
@@ -33,7 +33,7 @@ WHERE `gear` > 3.0;"))
 
     expect_equal(update, sql(
 "UPDATE `na.c`
-SET 'carb' = 11.0
+SET `carb` = 11.0
 WHERE COALESCE(`gear` > 3.0,1);"))
   })
 })

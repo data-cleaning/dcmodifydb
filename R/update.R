@@ -38,8 +38,8 @@ alter_stmt <- function(x, table, table_name){
 
   lapply(new_vars$name, function(n){
     build_sql(
-      "ALTER TABLE ", sql(table_name),
-      "\nADD COLUMN ", sql(n), " ", new_vars$type[new_vars$name == n], ";"
+      "ALTER TABLE ", ident_q(table_name),
+      "\nADD COLUMN ", ident(n), " ", sql(new_vars$type[new_vars$name == n]), ";"
       , con = con
       )
   })
@@ -70,7 +70,7 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
   }
 
   build_sql("UPDATE ", sql(table)
-           ,  "\n", "SET ", varname
+           ,  "\n", "SET ", ident(varname)
            ,         " = ", value
            ,  "\n", where
            , ";"
