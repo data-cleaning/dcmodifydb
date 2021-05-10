@@ -15,9 +15,13 @@ modifier_to_sql <- function(x, table, con = NULL){
 
 #' @importFrom dbplyr translate_sql build_sql sql
 update_stmt <- function(x, table, con, ..., na.condition=FALSE){
-  if (!is_assignment(x)){
+  if (!is_assignment(x) && !is.symbol(x[[2]])){
     return(NULL)
   }
+
+  # check if column has to be added...
+
+
   varname <- as.character(x[[2]])
   value <- do.call(translate_sql, list(x[[3]], con = con))
   where <- NULL
@@ -49,8 +53,9 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
 #' @param con optional, when `table` is a character a dbi connection.
 #' @param file to which the sql will be written.
+#' @param ... not used
 #' @importFrom validate description label origin
-dump_sql <- function(x, table, con = NULL, file = stdout()){
+dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
   sql <- modifier_to_sql(x, table, con)
 
   # This does not work well when there are multiple assignments per
@@ -75,14 +80,17 @@ dump_sql <- function(x, table, con = NULL, file = stdout()){
                )
 
   org <- paste0("'",unique(origin(x)),"'", collapse = " ,")
-
+  args <- list(...)
   front <- paste0("-- ", c(
     "-------------------------------------",
     "Generated with dcmodifydb, do not edit",
     sprintf("dcmodify version: %s", utils::packageVersion("dcmodify")),
     sprintf("dcmodifydb version: %s", utils::packageVersion("dcmodifydb")),
     sprintf("from: %s", org),
-    sprintf("date: %s", Sys.Date()),
+    if (!isTRUE(args$skip_date)){
+      sprintf("date: %s", Sys.Date())
+    },
+
     "-------------------------------------"
   ))
 

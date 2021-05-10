@@ -3,7 +3,6 @@
 -- dcmodify version: 0.1.9
 -- dcmodifydb version: 0.1.0.9000
 -- from: 'test-sql.yml'
--- date: 2021-05-09
 -- -------------------------------------
 
 
