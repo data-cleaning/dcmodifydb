@@ -118,21 +118,25 @@ rules:
     Derive a new variable...
 ```
 
+Let’s load the rules and apply them to a data set:
+
 ``` r
 m <- modifier(.file = "example.yml")
 ```
 
 ``` r
+# setup the data
 "age, income
   11,   2000
  150,    300
   25,   2000
- -10,    2000
+ -10,   2000
 " -> csv
 income <- read.csv(text = csv, strip.white = TRUE)
 dbWriteTable(con, "income", income)
 tbl_income <- dplyr::tbl(con, "income")
 
+# this is the table in the data base
 tbl_income
 #> # Source:   table<income> [?? x 2]
 #> # Database: sqlite 3.35.5 []
@@ -142,6 +146,8 @@ tbl_income
 #> 2   150    300
 #> 3    25   2000
 #> 4   -10   2000
+
+# and now after modification
 modify(tbl_income, m, copy = FALSE)
 #> # Source:   table<income> [?? x 2]
 #> # Database: sqlite 3.35.5 []
