@@ -1,11 +1,25 @@
 rules:
-- expr: if (age > 130) age <- 130L
+- expr: if (age > 130) age = 130L
   name: M1
   label: 'Maximum age'
   description: |
-    Human age is limited.
-- expr: if (age < 12) {income <- 0L}
+    Human age is limited. (can use  "=")
+    Cap the age at 130
+- expr: is.na(age) <- age < 0
   name: M2
+  label: 'Unknown age'
+  description: |
+    Negative Age, nah...
+    (set to NA)
+- expr: income[age < 12] <- 0
+  name: M3
   label: 'No Child Labor'
   description: |
-    Children should not work.
+    Children should not work. (R syntax)
+    Set income to zero for children.
+- expr: retired <- (age > 67)
+  name: M4
+  label: 'Retired'
+  description: |
+    Derive a new variable...
+

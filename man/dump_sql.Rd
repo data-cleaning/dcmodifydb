@@ -2,7 +2,7 @@
 % Please edit documentation in R/update.R
 \name{dump_sql}
 \alias{dump_sql}
-\title{Write generate sql}
+\title{Write generated sql}
 \usage{
 dump_sql(x, table, con = NULL, file = stdout(), ...)
 }
@@ -18,5 +18,5 @@ dump_sql(x, table, con = NULL, file = stdout(), ...)
 \item{...}{not used}
 }
 \description{
-Writes generates sql to file
+Writes generated sql to file
 }

@@ -93,16 +93,29 @@ You can use YAML to store the modification rules: “example.yml”
 
 ``` yaml
 rules:
-- expr: if (age > 130) age <- 130
+- expr: if (age > 130) age = 130L
   name: M1
   label: 'Maximum age'
   description: |
-    Human age is limited.
-- expr: if (age < 12) {income <- 0}
+    Human age is limited. (can use  "=")
+    Cap the age at 130
+- expr: is.na(age) <- age < 0
   name: M2
+  label: 'Unknown age'
+  description: |
+    Negative Age, nah...
+    (set to NA)
+- expr: income[age < 12] <- 0
+  name: M3
   label: 'No Child Labor'
   description: |
-    Children should not work.
+    Children should not work. (R syntax)
+    Set income to zero for children.
+- expr: retired <- (age > 67)
+  name: M4
+  label: 'Retired'
+  description: |
+    Derive a new variable...
 ```
 
 ``` r
@@ -114,6 +127,7 @@ m <- modifier(.file = "example.yml")
   11,   2000
  150,    300
   25,   2000
+ -10,    2000
 " -> csv
 income <- read.csv(text = csv, strip.white = TRUE)
 dbWriteTable(con, "income", income)
@@ -127,14 +141,77 @@ tbl_income
 #> 1    11   2000
 #> 2   150    300
 #> 3    25   2000
+#> 4   -10   2000
 modify(tbl_income, m, copy = FALSE)
 #> # Source:   table<income> [?? x 2]
 #> # Database: sqlite 3.35.5 []
-#>     age income
-#>   <int>  <int>
-#> 1    11      0
-#> 2   130    300
-#> 3    25   2000
+#>     age income retired
+#>   <int>  <int>   <int>
+#> 1    11      0       0
+#> 2   130    300       1
+#> 3    25   2000       0
+#> 4    NA   2000      NA
+```
+
+Generated sql can be written with `dump_sql`
+
+``` r
+dump_sql(m, tbl_income, file = "modify.sql")
+```
+
+modify.sql:
+
+``` sql
+-- -------------------------------------
+-- Generated with dcmodifydb, do not edit
+-- dcmodify version: 0.1.9
+-- dcmodifydb version: 0.1.0.9000
+-- from: 'example/example.yml'
+-- date: 2021-05-11
+-- -------------------------------------
+
+
+ALTER TABLE `income`
+ADD COLUMN `retired` integer;
+
+-- M1: Maximum age
+-- Human age is limited. (can use  "=")
+-- Cap the age at 130
+-- 
+-- R expression: if (age > 130) age = 130
+UPDATE `income`
+SET `age` = 130
+WHERE `age` > 130.0;
+
+-- M2: Unknown age
+-- Negative Age, nah...
+-- (set to NA)
+-- 
+-- R expression: is.na(age) <- age < 0
+UPDATE `income`
+SET `age` = NULL
+WHERE `age` < 0.0;
+
+-- M3: No Child Labor
+-- Children should not work. (R syntax)
+-- Set income to zero for children.
+-- 
+-- R expression: income[age < 12] <- 0
+UPDATE `income`
+SET `income` = 0.0
+WHERE `age` < 12.0;
+
+-- M4: Retired
+-- Derive a new variable...
+-- 
+-- R expression: retired <- (age > 67)
+UPDATE `income`
+SET `retired` = (`age` > 67.0)
+;
+```
+
+``` r
+dbDisconnect(con)
 ```
 
 Note: Modification rules can be written to yaml with `as_yaml` and
@@ -142,41 +219,4 @@ Note: Modification rules can be written to yaml with `as_yaml` and
 
 ``` r
 dcmodify::export_yaml(m, "cleaning_steps.yml")
-```
-
-Generated sql can be written with `dump_sql`
-
-``` r
-dump_sql(m, tbl_income)
-#> -- -------------------------------------
-#> -- Generated with dcmodifydb, do not edit
-#> -- dcmodify version: 0.1.9
-#> -- dcmodifydb version: 0.1.0.9000
-#> -- from: 'example/example.yml'
-#> -- date: 2021-05-10
-#> -- -------------------------------------
-#> 
-#> 
-#> 
-#> 
-#> -- M1: Maximum age
-#> -- Human age is limited.
-#> -- 
-#> -- R expression: if (age > 130) age <- 130
-#> UPDATE `income`
-#> SET `age` = 130
-#> WHERE `age` > 130.0;
-#> 
-#> -- M2: No Child Labor
-#> -- Children should not work.
-#> -- R expression: if (age < 12) {
-#> --     income <- 0
-#> -- }
-#> UPDATE `income`
-#> SET `income` = 0
-#> WHERE `age` < 12.0;
-```
-
-``` r
-dbDisconnect(con)
 ```

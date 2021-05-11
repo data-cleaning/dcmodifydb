@@ -60,17 +60,8 @@ con <- dbConnect(RSQLite::SQLite())
 You can use YAML to store the modification rules: "example.yml"
 
 ```yaml
-rules:
-- expr: if (age > 130) age <- 130
-  name: M1
-  label: 'Maximum age'
-  description: |
-    Human age is limited.
-- expr: if (age < 12) {income <- 0}
-  name: M2
-  label: 'No Child Labor'
-  description: |
-    Children should not work.
+```{r, result="asis", child="example/example.yml"}
+```
 ```
 
 ```{r, eval = FALSE}
@@ -86,6 +77,7 @@ m <- modifier(.file = "example/example.yml")
   11,   2000
  150,    300
   25,   2000
+ -10,    2000
 " -> csv
 income <- read.csv(text = csv, strip.white = TRUE)
 dbWriteTable(con, "income", income)
@@ -95,19 +87,26 @@ tbl_income
 modify(tbl_income, m, copy = FALSE)
 ```
 
-Note: Modification rules can be written to yaml with `as_yaml` and `export_yaml`.
-
-```{r, eval = FALSE}
-dcmodify::export_yaml(m, "cleaning_steps.yml")
-```
-
 Generated sql can be written with `dump_sql`
 
-```{r}
+```{r, eval=FALSE}
+dump_sql(m, tbl_income, file = "modify.sql")
+```
+
+modify.sql:
+```sql
+```{r, echo=FALSE, results='asis'}
 dump_sql(m, tbl_income)
+```
 ```
 
 
 ```{r}
 dbDisconnect(con)
+```
+
+Note: Modification rules can be written to yaml with `as_yaml` and `export_yaml`.
+
+```{r, eval = FALSE}
+dcmodify::export_yaml(m, "cleaning_steps.yml")
 ```

@@ -40,7 +40,7 @@ library(dcmodifydb)
 
 # silly modification rules
 m <- modifier( if (cyl == 6)  gear <- 10
-             , if (cyl == 4)  gear <- 0
+             , gear[cyl == 4] <- 0  # this R syntax works too :-)
              , if (gear == 3) cyl <- 2
              )
 
