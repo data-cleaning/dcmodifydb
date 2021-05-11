@@ -144,16 +144,29 @@
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>You can use YAML to store the modification rules: “example.yml”</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">rules</span><span class="kw">:</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &gt; 130) age &lt;- 130</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &gt; 130) age = 130L</span></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M1</span></span>
 <span id="cb4-4"><a href="#cb4-4"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'Maximum age'</span></span>
 <span id="cb4-5"><a href="#cb4-5"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>    Human age is limited.</span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &lt; 12) {income &lt;- 0}</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M2</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'No Child Labor'</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a>    Children should not work.</span></code></pre></div>
+<span id="cb4-6"><a href="#cb4-6"></a>    Human age is limited. (can use  "=")</span>
+<span id="cb4-7"><a href="#cb4-7"></a>    Cap the age at 130</span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> is.na(age) &lt;- age &lt; 0</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M2</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'Unknown age'</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>    Negative Age, nah...</span>
+<span id="cb4-13"><a href="#cb4-13"></a>    (set to NA)</span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> income[age &lt; 12] &lt;- 0</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M3</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'No Child Labor'</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>    Children should not work. (R syntax)</span>
+<span id="cb4-19"><a href="#cb4-19"></a>    Set income to zero for children.</span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> retired &lt;- (age &gt; 67)</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M4</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'Retired'</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="fu">  description</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a>    Derive a new variable...</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">modifier</span><span class="op">(</span>.file <span class="op">=</span> <span class="st">"example.yml"</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -161,6 +174,7 @@
   11,   2000
  150,    300
   25,   2000
+ -10,    2000
 "</span> <span class="op">-&gt;</span> <span class="va">csv</span>
 <span class="va">income</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">csv</span>, strip.white <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbWriteTable.html">dbWriteTable</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"income"</span>, <span class="va">income</span><span class="op">)</span>
@@ -174,49 +188,71 @@
 <span class="co">#&gt; 1    11   2000</span>
 <span class="co">#&gt; 2   150    300</span>
 <span class="co">#&gt; 3    25   2000</span>
+<span class="co">#&gt; 4   -10   2000</span>
 <span class="fu">modify</span><span class="op">(</span><span class="va">tbl_income</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; # Source:   table&lt;income&gt; [?? x 2]</span>
 <span class="co">#&gt; # Database: sqlite 3.35.5 []</span>
-<span class="co">#&gt;     age income</span>
-<span class="co">#&gt;   &lt;int&gt;  &lt;int&gt;</span>
-<span class="co">#&gt; 1    11      0</span>
-<span class="co">#&gt; 2   130    300</span>
-<span class="co">#&gt; 3    25   2000</span></code></pre></div>
-<p>Note: Modification rules can be written to yaml with <code>as_yaml</code> and <code>export_yaml</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">dcmodify</span><span class="fu">::</span><span class="fu">export_yaml</span><span class="op">(</span><span class="va">m</span>, <span class="st">"cleaning_steps.yml"</span><span class="op">)</span></code></pre></div>
+<span class="co">#&gt;     age income retired</span>
+<span class="co">#&gt;   &lt;int&gt;  &lt;int&gt;   &lt;int&gt;</span>
+<span class="co">#&gt; 1    11      0       0</span>
+<span class="co">#&gt; 2   130    300       1</span>
+<span class="co">#&gt; 3    25   2000       0</span>
+<span class="co">#&gt; 4    NA   2000      NA</span></code></pre></div>
 <p>Generated sql can be written with <code>dump_sql</code></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/dump_sql.html">dump_sql</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">tbl_income</span><span class="op">)</span>
-<span class="co">#&gt; -- -------------------------------------</span>
-<span class="co">#&gt; -- Generated with dcmodifydb, do not edit</span>
-<span class="co">#&gt; -- dcmodify version: 0.1.9</span>
-<span class="co">#&gt; -- dcmodifydb version: 0.1.0.9000</span>
-<span class="co">#&gt; -- from: 'example/example.yml'</span>
-<span class="co">#&gt; -- date: 2021-05-10</span>
-<span class="co">#&gt; -- -------------------------------------</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; -- M1: Maximum age</span>
-<span class="co">#&gt; -- Human age is limited.</span>
-<span class="co">#&gt; -- </span>
-<span class="co">#&gt; -- R expression: if (age &gt; 130) age &lt;- 130</span>
-<span class="co">#&gt; UPDATE `income`</span>
-<span class="co">#&gt; SET `age` = 130</span>
-<span class="co">#&gt; WHERE `age` &gt; 130.0;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; -- M2: No Child Labor</span>
-<span class="co">#&gt; -- Children should not work.</span>
-<span class="co">#&gt; -- R expression: if (age &lt; 12) {</span>
-<span class="co">#&gt; --     income &lt;- 0</span>
-<span class="co">#&gt; -- }</span>
-<span class="co">#&gt; UPDATE `income`</span>
-<span class="co">#&gt; SET `income` = 0</span>
-<span class="co">#&gt; WHERE `age` &lt; 12.0;</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/dump_sql.html">dump_sql</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">tbl_income</span>, file <span class="op">=</span> <span class="st">"modify.sql"</span><span class="op">)</span></code></pre></div>
+<p>modify.sql:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">-- -------------------------------------</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co">-- Generated with dcmodifydb, do not edit</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">-- dcmodify version: 0.1.9</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">-- dcmodifydb version: 0.1.0.9000</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">-- from: 'example/example.yml'</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">-- date: 2021-05-11</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">-- -------------------------------------</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a></span>
+<span id="cb8-9"><a href="#cb8-9"></a></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `retired` <span class="dt">integer</span>;</span>
+<span id="cb8-12"><a href="#cb8-12"></a></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">-- M1: Maximum age</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">-- Human age is limited. (can use  "=")</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">-- Cap the age at 130</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">-- </span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">-- R expression: if (age &gt; 130) age = 130</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="kw">SET</span> `age` <span class="op">=</span> <span class="dv">130</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="kw">WHERE</span> `age` <span class="op">&gt;</span> <span class="fl">130.0</span>;</span>
+<span id="cb8-21"><a href="#cb8-21"></a></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">-- M2: Unknown age</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">-- Negative Age, nah...</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a><span class="co">-- (set to NA)</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="co">-- </span></span>
+<span id="cb8-26"><a href="#cb8-26"></a><span class="co">-- R expression: is.na(age) &lt;- age &lt; 0</span></span>
+<span id="cb8-27"><a href="#cb8-27"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb8-28"><a href="#cb8-28"></a><span class="kw">SET</span> `age` <span class="op">=</span> <span class="kw">NULL</span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">0.0</span>;</span>
+<span id="cb8-30"><a href="#cb8-30"></a></span>
+<span id="cb8-31"><a href="#cb8-31"></a><span class="co">-- M3: No Child Labor</span></span>
+<span id="cb8-32"><a href="#cb8-32"></a><span class="co">-- Children should not work. (R syntax)</span></span>
+<span id="cb8-33"><a href="#cb8-33"></a><span class="co">-- Set income to zero for children.</span></span>
+<span id="cb8-34"><a href="#cb8-34"></a><span class="co">-- </span></span>
+<span id="cb8-35"><a href="#cb8-35"></a><span class="co">-- R expression: income[age &lt; 12] &lt;- 0</span></span>
+<span id="cb8-36"><a href="#cb8-36"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb8-37"><a href="#cb8-37"></a><span class="kw">SET</span> `income` <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb8-38"><a href="#cb8-38"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">12.0</span>;</span>
+<span id="cb8-39"><a href="#cb8-39"></a></span>
+<span id="cb8-40"><a href="#cb8-40"></a><span class="co">-- M4: Retired</span></span>
+<span id="cb8-41"><a href="#cb8-41"></a><span class="co">-- Derive a new variable...</span></span>
+<span id="cb8-42"><a href="#cb8-42"></a><span class="co">-- </span></span>
+<span id="cb8-43"><a href="#cb8-43"></a><span class="co">-- R expression: retired &lt;- (age &gt; 67)</span></span>
+<span id="cb8-44"><a href="#cb8-44"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb8-45"><a href="#cb8-45"></a><span class="kw">SET</span> `retired` <span class="op">=</span> (`age` <span class="op">&gt;</span> <span class="fl">67.0</span>)</span>
+<span id="cb8-46"><a href="#cb8-46"></a>;</span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
+<p>Note: Modification rules can be written to yaml with <code>as_yaml</code> and <code>export_yaml</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">dcmodify</span><span class="fu">::</span><span class="fu">export_yaml</span><span class="op">(</span><span class="va">m</span>, <span class="st">"cleaning_steps.yml"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 </div>
