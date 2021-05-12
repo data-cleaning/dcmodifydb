@@ -115,11 +115,16 @@ rules:
   description: |
     Children should not work. (R syntax)
     Set income to zero for children.
-- expr: retired <- (age > 67)
+- expr: "retired <- age > 67"
   name: M4
   label: 'Retired'
   description: |
     Derive a new variable...
+- expr: if (age < 18) age_class = 'child' else age_class = 'adult'
+  name: M5
+  label: 'Age class'
+  description: |
+    Derive a new variable with if else
 ```
 
 Let’s load the rules and apply them to a data set:
@@ -152,15 +157,15 @@ tbl_income
 #> 4   -10   2000
 
 # and now after modification
-modify(tbl_income, m, copy = FALSE)
+modify(tbl_income, m, copy = FALSE) 
 #> # Source:   table<income> [?? x 2]
 #> # Database: sqlite 3.35.5 []
-#>     age income retired
-#>   <int>  <int>   <int>
-#> 1    11      0       0
-#> 2   130    300       1
-#> 3    25   2000       0
-#> 4    NA   2000      NA
+#>     age income retired age_class
+#>   <int>  <int>   <int> <chr>    
+#> 1    11      0       0 child    
+#> 2   130    300       1 adult    
+#> 3    25   2000       0 adult    
+#> 4    NA   2000      NA <NA>
 ```
 
 Generated sql can be written with `dump_sql`
@@ -183,6 +188,9 @@ modify.sql:
 
 ALTER TABLE `income`
 ADD COLUMN `retired` integer;
+
+ALTER TABLE `income`
+ADD COLUMN `age_class` character;
 
 -- M1: Maximum age
 -- Human age is limited. (can use  "=")
@@ -214,10 +222,22 @@ WHERE `age` < 12.0;
 -- M4: Retired
 -- Derive a new variable...
 -- 
--- R expression: retired <- (age > 67)
+-- R expression: retired <- age > 67
 UPDATE `income`
-SET `retired` = (`age` > 67.0)
+SET `retired` = `age` > 67.0
 ;
+
+-- M5: Age class
+-- Derive a new variable with if else
+-- 
+-- R expression: if (age < 18) age_class = "child" else age_class = "adult"
+UPDATE `income`
+SET `age_class` = 'child'
+WHERE `age` < 18.0;
+
+UPDATE `income`
+SET `age_class` = 'adult'
+WHERE NOT(`age` < 18.0);
 ```
 
 ``` r

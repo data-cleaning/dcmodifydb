@@ -92,7 +92,7 @@ tbl_income <- dplyr::tbl(con, "income")
 tbl_income
 
 # and now after modification
-modify(tbl_income, m, copy = FALSE)
+modify(tbl_income, m, copy = FALSE) 
 ```
 
 Generated sql can be written with `dump_sql`

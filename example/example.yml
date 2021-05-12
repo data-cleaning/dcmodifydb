@@ -17,9 +17,14 @@ rules:
   description: |
     Children should not work. (R syntax)
     Set income to zero for children.
-- expr: retired <- (age > 67)
+- expr: "retired <- age > 67"
   name: M4
   label: 'Retired'
   description: |
     Derive a new variable...
+- expr: if (age < 18) age_class = 'child' else age_class = 'adult'
+  name: M5
+  label: 'Age class'
+  description: |
+    Derive a new variable with if else
 
