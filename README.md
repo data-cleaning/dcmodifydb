@@ -16,6 +16,10 @@ The goal of dcmodifydb is to apply modification rules specified with
 `dcmodify` on a database table, allowing for documented, reproducable
 data cleaning adjustments in a database.
 
+`dcmodifydb` separates **intent** from **execution**: a user specifies
+*what*, *why* and *how* of an automatic data change and uses dcmodify to
+execute them on a `tbl` database table.
+
 ## Installation
 
 <!-- You can install the released version of dcmodifydb from [CRAN](https://CRAN.R-project.org) with: -->
@@ -173,7 +177,7 @@ modify.sql:
 -- dcmodify version: 0.1.9
 -- dcmodifydb version: 0.1.0.9000
 -- from: 'example/example.yml'
--- date: 2021-05-11
+-- date: 2021-05-12
 -- -------------------------------------
 
 

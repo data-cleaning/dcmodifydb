@@ -7,6 +7,8 @@
 #' @param n number of records to use in this check
 #' @return `logical with which statements are working`
 is_working_db <- function(updates, tab, n = 2){
+
+  #TODO integrate this with sql_alter
   # take the top 2 of the table
   tab <- utils::head(tab, n)
   tc <- get_table_con(tab, copy = TRUE)
