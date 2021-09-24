@@ -13,7 +13,7 @@
 
 \item{copy}{if \code{TRUE} (default), modify copy of table}
 
-\item{transaction}{if \code{TRUE} use one transaction for all modificationṡ.}
+\item{transaction}{if \code{TRUE} use one transaction for all modifications.}
 
 \item{...}{unused}
 }

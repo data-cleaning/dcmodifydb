@@ -19,7 +19,7 @@
 #' @param dat [tbl_sql()] object, table in a SQL database
 #' @param x `dcmodify::modifier()` object.
 #' @param copy if `TRUE` (default), modify copy of table
-#' @param transaction if `TRUE` use one transaction for all modificationṡ.
+#' @param transaction if `TRUE` use one transaction for all modifications.
 #' @param ... unused
 #' @example ./example/modify.R
 #' @export
