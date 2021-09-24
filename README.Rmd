@@ -77,6 +77,11 @@ m <- modifier(.file = "example/example.yml")
 ```
 
 ```{r}
+print(m)
+```
+
+
+```{r}
 # setup the data
 "age, income
   11,   2000

@@ -134,6 +134,25 @@ m <- modifier(.file = "example.yml")
 ```
 
 ``` r
+print(m)
+#> Object of class modifier with 5 elements:
+#> M1: Maximum age
+#>   if (age > 130) age = 130
+#> 
+#> M2: Unknown age
+#>   is.na(age) <- age < 0
+#> 
+#> M3: No Child Labor
+#>   income[age < 12] <- 0
+#> 
+#> M4: Retired
+#>   retired <- age > 67
+#> 
+#> M5: Age class
+#>   if (age < 18) age_class = "child" else age_class = "adult"
+```
+
+``` r
 # setup the data
 "age, income
   11,   2000
@@ -182,7 +201,7 @@ modify.sql:
 -- dcmodify version: 0.1.9
 -- dcmodifydb version: 0.1.0.9000
 -- from: 'example/example.yml'
--- date: 2021-05-12
+-- date: 2021-05-18
 -- -------------------------------------
 
 
