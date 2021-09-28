@@ -40,7 +40,11 @@
 
 
 <meta property="og:title" content="Write generated sql — dump_sql" />
-<meta property="og:description" content="Writes generated sql to file" />
+<meta property="og:description" content="Writes the generated sql to a file. The script contains ALTER and
+UPDATE statements and can be used as documentation.
+Note that when this script is run on the database it will change the
+original table. This differs from the default behavior of dcmodify which
+works on a (temporary) copy of the table." />
 
 
 
@@ -72,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dcmodifydb</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.3</span>
       </span>
     </div>
 
@@ -114,7 +118,11 @@
     </div>
 
     <div class="ref-description">
-    <p>Writes generated sql to file</p>
+    <p>Writes the generated sql to a file. The script contains ALTER and
+UPDATE statements and can be used as documentation.
+Note that when this script is run on the database it will change the
+original table. This differs from the default behavior of dcmodify which
+works on a (temporary) copy of the table.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dump_sql</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>table</span>, con <span class='op'>=</span> <span class='cn'>NULL</span>, file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/showConnections.html'>stdout</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span></pre>
@@ -144,6 +152,9 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>character</code> sql script with all statements.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
