@@ -1,6 +1,6 @@
 #' Extract UPDATE statements
 #'
-#' Extract UPDATE statements from modifier object.
+#' Extract UPDATE statements from modifier object as a list of SQL statements.
 #' @importFrom dplyr tbl_vars
 #' @export
 #' @param x `dcmodify::modifier()` object
@@ -84,13 +84,18 @@ update_stmt <- function(x, table, con, ..., na.condition=FALSE){
 
 #' Write generated sql
 #'
-#' Writes generated sql to file
+#' Writes the generated sql to a file. The script contains ALTER and
+#' UPDATE statements and can be used as documentation.
+#' Note that when this script is run on the database it will change the
+#' original table. This differs from the default behavior of dcmodify which
+#' works on a (temporary) copy of the table.
 #' @export
 #' @param x `dcmodify::modifier()` object with rules to be written
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
 #' @param con optional, when `table` is a character a dbi connection.
 #' @param file to which the sql will be written.
 #' @param ... not used
+#' @return `character` sql script with all statements.
 #' @importFrom validate description label origin
 dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
   tc <- get_table_con(table, con, copy=FALSE)

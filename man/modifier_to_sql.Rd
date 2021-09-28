@@ -17,5 +17,5 @@ modifier_to_sql(x, table, con = NULL)
 \code{list} of sql UPDATE statements.
 }
 \description{
-Extract UPDATE statements from modifier object.
+Extract UPDATE statements from modifier object as a list of SQL statements.
 }

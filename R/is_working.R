@@ -1,11 +1,11 @@
 #' Check if UPDATE statement is functional
 #'
-#' Extract UPDATE statements from modifier object.
+#' Get an indication of which R statement can be executed on the SQL database.
 #' @export
 #' @param updates `list` of update statements object ([modifier_to_sql()])
 #' @param tab tbl object
 #' @param n number of records to use in this check
-#' @return `logical with which statements are working`
+#' @return `logical` with which statements are working
 is_working_db <- function(updates, tab, n = 2){
 
   #TODO integrate this with sql_alter

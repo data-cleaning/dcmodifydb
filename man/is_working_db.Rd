@@ -14,8 +14,8 @@ is_working_db(updates, tab, n = 2)
 \item{n}{number of records to use in this check}
 }
 \value{
-\verb{logical with which statements are working}
+\code{logical} with which statements are working
 }
 \description{
-Extract UPDATE statements from modifier object.
+Get an indication of which R statement can be executed on the SQL database.
 }

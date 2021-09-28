@@ -17,6 +17,9 @@
 
 \item{...}{unused}
 }
+\value{
+\code{\link[=tbl_sql]{tbl_sql()}} object, referencing the modified table object.
+}
 \description{
 Modify records in a database table using modification rules specified
 in a modifier object.

@@ -17,6 +17,13 @@ dump_sql(x, table, con = NULL, file = stdout(), ...)
 
 \item{...}{not used}
 }
+\value{
+\code{character} sql script with all statements.
+}
 \description{
-Writes generated sql to file
+Writes the generated sql to a file. The script contains ALTER and
+UPDATE statements and can be used as documentation.
+Note that when this script is run on the database it will change the
+original table. This differs from the default behavior of dcmodify which
+works on a (temporary) copy of the table.
 }

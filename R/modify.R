@@ -22,6 +22,7 @@
 #' @param transaction if `TRUE` use one transaction for all modifications.
 #' @param ... unused
 #' @example ./example/modify.R
+#' @return [tbl_sql()] object, referencing the modified table object.
 #' @export
 setMethod("modify", signature("ANY", "modifier")
           , function(dat, x, copy = NULL, transaction = !isTRUE(copy), ...){
