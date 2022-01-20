@@ -166,6 +166,7 @@ get_table_con <- function(table, con = NULL, copy = NULL){
     if (isTRUE(copy)){
       table_name <- random_name(table_name)
       table <- dplyr::compute(table, name = table_name)
+      table_name <- dbplyr::remote_name(table) %||% table_name
     }
     con <- dbplyr::remote_con(table)
   } else {
