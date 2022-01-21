@@ -27,7 +27,7 @@ WHERE `gear` > 3.0;"))
     d <- tbl_memdb(mtcars, "na.c")
     tc <- get_table_con(d, copy=FALSE)
     update <- update_stmt( asgn[[1]]
-                         , table = tc$table_name
+                         , table_ident = tc$table_ident
                          , con = tc$con
                          , na.condition = TRUE
                          )

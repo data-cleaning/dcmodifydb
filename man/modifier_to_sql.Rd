@@ -9,7 +9,7 @@ modifier_to_sql(x, table, con = NULL)
 \arguments{
 \item{x}{\code{dcmodify::modifier()} object}
 
-\item{table}{table name}
+\item{table}{table object}
 
 \item{con}{optional connection}
 }

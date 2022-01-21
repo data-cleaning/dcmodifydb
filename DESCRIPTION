@@ -1,6 +1,6 @@
 Package: dcmodifydb
 Title: Modifying Rules on a DataBase
-Version: 0.1.5
+Version: 0.2.0
 Authors@R: 
     person(given = "Edwin",
            family = "de Jonge",
