@@ -1,4 +1,6 @@
-random_name <- function(name){
+random_name <- function(name = NULL){
+  # if name is a table name with a schema, this does not work correctly
+  # so currently switching back to the name dcmodify
 
   if (is.null(name)){
     name <- "dcmodifydb"
