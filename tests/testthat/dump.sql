@@ -1,7 +1,7 @@
 -- -------------------------------------
 -- Generated with dcmodifydb, do not edit
 -- dcmodify version: 0.1.9
--- dcmodifydb version: 0.1.5
+-- dcmodifydb version: 0.2.0
 -- from: 'test-sql.yml'
 -- -------------------------------------
 
