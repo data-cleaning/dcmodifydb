@@ -1,6 +1,6 @@
 Package: dcmodifydb
 Title: Modifying Rules on a DataBase
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: 
     person(given = "Edwin",
            family = "de Jonge",
@@ -24,6 +24,7 @@ Imports:
     dbplyr,
     DBI,
     dcmodify (>= 0.1.9),
-    validate
+    validate, 
+    methods
 URL: https://github.com/data-cleaning/dcmodifydb
 BugReports: https://github.com/data-cleaning/dcmodifydb/issues
