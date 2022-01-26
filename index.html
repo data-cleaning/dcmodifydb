@@ -229,64 +229,66 @@
 <div class="sourceCode" id="cb9"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">-- -------------------------------------</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a><span class="co">-- Generated with dcmodifydb, do not edit</span></span>
 <span id="cb9-3"><a href="#cb9-3"></a><span class="co">-- dcmodify version: 0.1.9</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">-- dcmodifydb version: 0.2.0</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">-- from: 'example/example.yml'</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">-- date: 2022-01-21</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co">-- -------------------------------------</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a></span>
-<span id="cb9-9"><a href="#cb9-9"></a></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `retired` <span class="dt">integer</span>;</span>
-<span id="cb9-12"><a href="#cb9-12"></a></span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
-<span id="cb9-14"><a href="#cb9-14"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `age_class` <span class="dt">character</span>;</span>
-<span id="cb9-15"><a href="#cb9-15"></a></span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="co">-- M1: Maximum age</span></span>
-<span id="cb9-17"><a href="#cb9-17"></a><span class="co">-- Human age is limited. (can use  "=")</span></span>
-<span id="cb9-18"><a href="#cb9-18"></a><span class="co">-- Cap the age at 130</span></span>
-<span id="cb9-19"><a href="#cb9-19"></a><span class="co">-- </span></span>
-<span id="cb9-20"><a href="#cb9-20"></a><span class="co">-- R expression: if (age &gt; 130) age = 130</span></span>
-<span id="cb9-21"><a href="#cb9-21"></a><span class="kw">UPDATE</span> `income`</span>
-<span id="cb9-22"><a href="#cb9-22"></a><span class="kw">SET</span> `age` <span class="op">=</span> <span class="dv">130</span></span>
-<span id="cb9-23"><a href="#cb9-23"></a><span class="kw">WHERE</span> `age` <span class="op">&gt;</span> <span class="fl">130.0</span>;</span>
-<span id="cb9-24"><a href="#cb9-24"></a></span>
-<span id="cb9-25"><a href="#cb9-25"></a><span class="co">-- M2: Unknown age</span></span>
-<span id="cb9-26"><a href="#cb9-26"></a><span class="co">-- Negative Age, nah...</span></span>
-<span id="cb9-27"><a href="#cb9-27"></a><span class="co">-- (set to NA)</span></span>
-<span id="cb9-28"><a href="#cb9-28"></a><span class="co">-- </span></span>
-<span id="cb9-29"><a href="#cb9-29"></a><span class="co">-- R expression: is.na(age) &lt;- age &lt; 0</span></span>
-<span id="cb9-30"><a href="#cb9-30"></a><span class="kw">UPDATE</span> `income`</span>
-<span id="cb9-31"><a href="#cb9-31"></a><span class="kw">SET</span> `age` <span class="op">=</span> <span class="kw">NULL</span></span>
-<span id="cb9-32"><a href="#cb9-32"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">0.0</span>;</span>
-<span id="cb9-33"><a href="#cb9-33"></a></span>
-<span id="cb9-34"><a href="#cb9-34"></a><span class="co">-- M3: No Child Labor</span></span>
-<span id="cb9-35"><a href="#cb9-35"></a><span class="co">-- Children should not work. (R syntax)</span></span>
-<span id="cb9-36"><a href="#cb9-36"></a><span class="co">-- Set income to zero for children.</span></span>
-<span id="cb9-37"><a href="#cb9-37"></a><span class="co">-- </span></span>
-<span id="cb9-38"><a href="#cb9-38"></a><span class="co">-- R expression: income[age &lt; 12] &lt;- 0</span></span>
-<span id="cb9-39"><a href="#cb9-39"></a><span class="kw">UPDATE</span> `income`</span>
-<span id="cb9-40"><a href="#cb9-40"></a><span class="kw">SET</span> `income` <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb9-41"><a href="#cb9-41"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">12.0</span>;</span>
-<span id="cb9-42"><a href="#cb9-42"></a></span>
-<span id="cb9-43"><a href="#cb9-43"></a><span class="co">-- M4: Retired</span></span>
-<span id="cb9-44"><a href="#cb9-44"></a><span class="co">-- Derive a new variable...</span></span>
-<span id="cb9-45"><a href="#cb9-45"></a><span class="co">-- </span></span>
-<span id="cb9-46"><a href="#cb9-46"></a><span class="co">-- R expression: retired &lt;- age &gt; 67</span></span>
-<span id="cb9-47"><a href="#cb9-47"></a><span class="kw">UPDATE</span> `income`</span>
-<span id="cb9-48"><a href="#cb9-48"></a><span class="kw">SET</span> `retired` <span class="op">=</span> `age` <span class="op">&gt;</span> <span class="fl">67.0</span></span>
-<span id="cb9-49"><a href="#cb9-49"></a>;</span>
-<span id="cb9-50"><a href="#cb9-50"></a></span>
-<span id="cb9-51"><a href="#cb9-51"></a><span class="co">-- M5: Age class</span></span>
-<span id="cb9-52"><a href="#cb9-52"></a><span class="co">-- Derive a new variable with if else</span></span>
-<span id="cb9-53"><a href="#cb9-53"></a><span class="co">-- </span></span>
-<span id="cb9-54"><a href="#cb9-54"></a><span class="co">-- R expression: if (age &lt; 18) age_class = "child" else age_class = "adult"</span></span>
-<span id="cb9-55"><a href="#cb9-55"></a><span class="kw">UPDATE</span> `income`</span>
-<span id="cb9-56"><a href="#cb9-56"></a><span class="kw">SET</span> `age_class` <span class="op">=</span> <span class="st">'child'</span></span>
-<span id="cb9-57"><a href="#cb9-57"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">18.0</span>;</span>
-<span id="cb9-58"><a href="#cb9-58"></a></span>
-<span id="cb9-59"><a href="#cb9-59"></a><span class="kw">UPDATE</span> `income`</span>
-<span id="cb9-60"><a href="#cb9-60"></a><span class="kw">SET</span> `age_class` <span class="op">=</span> <span class="st">'adult'</span></span>
-<span id="cb9-61"><a href="#cb9-61"></a><span class="kw">WHERE</span> <span class="kw">NOT</span>(`age` <span class="op">&lt;</span> <span class="fl">18.0</span>);</span></code></pre></div>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co">-- dcmodifydb version: 0.2.2</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">-- dplyr version: 1.0.7</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">-- dbplyr version: 2.1.1</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">-- from: 'example/example.yml'</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">-- date: 2022-01-26</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co">-- -------------------------------------</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a></span>
+<span id="cb9-11"><a href="#cb9-11"></a></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `retired` <span class="dt">integer</span>;</span>
+<span id="cb9-14"><a href="#cb9-14"></a></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `age_class` <span class="dt">character</span>;</span>
+<span id="cb9-17"><a href="#cb9-17"></a></span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="co">-- M1: Maximum age</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a><span class="co">-- Human age is limited. (can use  "=")</span></span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="co">-- Cap the age at 130</span></span>
+<span id="cb9-21"><a href="#cb9-21"></a><span class="co">-- </span></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="co">-- R expression: if (age &gt; 130) age = 130</span></span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb9-24"><a href="#cb9-24"></a><span class="kw">SET</span> `age` <span class="op">=</span> <span class="dv">130</span></span>
+<span id="cb9-25"><a href="#cb9-25"></a><span class="kw">WHERE</span> `age` <span class="op">&gt;</span> <span class="fl">130.0</span>;</span>
+<span id="cb9-26"><a href="#cb9-26"></a></span>
+<span id="cb9-27"><a href="#cb9-27"></a><span class="co">-- M2: Unknown age</span></span>
+<span id="cb9-28"><a href="#cb9-28"></a><span class="co">-- Negative Age, nah...</span></span>
+<span id="cb9-29"><a href="#cb9-29"></a><span class="co">-- (set to NA)</span></span>
+<span id="cb9-30"><a href="#cb9-30"></a><span class="co">-- </span></span>
+<span id="cb9-31"><a href="#cb9-31"></a><span class="co">-- R expression: is.na(age) &lt;- age &lt; 0</span></span>
+<span id="cb9-32"><a href="#cb9-32"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb9-33"><a href="#cb9-33"></a><span class="kw">SET</span> `age` <span class="op">=</span> <span class="kw">NULL</span></span>
+<span id="cb9-34"><a href="#cb9-34"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">0.0</span>;</span>
+<span id="cb9-35"><a href="#cb9-35"></a></span>
+<span id="cb9-36"><a href="#cb9-36"></a><span class="co">-- M3: No Child Labor</span></span>
+<span id="cb9-37"><a href="#cb9-37"></a><span class="co">-- Children should not work. (R syntax)</span></span>
+<span id="cb9-38"><a href="#cb9-38"></a><span class="co">-- Set income to zero for children.</span></span>
+<span id="cb9-39"><a href="#cb9-39"></a><span class="co">-- </span></span>
+<span id="cb9-40"><a href="#cb9-40"></a><span class="co">-- R expression: income[age &lt; 12] &lt;- 0</span></span>
+<span id="cb9-41"><a href="#cb9-41"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb9-42"><a href="#cb9-42"></a><span class="kw">SET</span> `income` <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb9-43"><a href="#cb9-43"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">12.0</span>;</span>
+<span id="cb9-44"><a href="#cb9-44"></a></span>
+<span id="cb9-45"><a href="#cb9-45"></a><span class="co">-- M4: Retired</span></span>
+<span id="cb9-46"><a href="#cb9-46"></a><span class="co">-- Derive a new variable...</span></span>
+<span id="cb9-47"><a href="#cb9-47"></a><span class="co">-- </span></span>
+<span id="cb9-48"><a href="#cb9-48"></a><span class="co">-- R expression: retired &lt;- age &gt; 67</span></span>
+<span id="cb9-49"><a href="#cb9-49"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb9-50"><a href="#cb9-50"></a><span class="kw">SET</span> `retired` <span class="op">=</span> `age` <span class="op">&gt;</span> <span class="fl">67.0</span></span>
+<span id="cb9-51"><a href="#cb9-51"></a>;</span>
+<span id="cb9-52"><a href="#cb9-52"></a></span>
+<span id="cb9-53"><a href="#cb9-53"></a><span class="co">-- M5: Age class</span></span>
+<span id="cb9-54"><a href="#cb9-54"></a><span class="co">-- Derive a new variable with if else</span></span>
+<span id="cb9-55"><a href="#cb9-55"></a><span class="co">-- </span></span>
+<span id="cb9-56"><a href="#cb9-56"></a><span class="co">-- R expression: if (age &lt; 18) age_class = "child" else age_class = "adult"</span></span>
+<span id="cb9-57"><a href="#cb9-57"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb9-58"><a href="#cb9-58"></a><span class="kw">SET</span> `age_class` <span class="op">=</span> <span class="st">'child'</span></span>
+<span id="cb9-59"><a href="#cb9-59"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">18.0</span>;</span>
+<span id="cb9-60"><a href="#cb9-60"></a></span>
+<span id="cb9-61"><a href="#cb9-61"></a><span class="kw">UPDATE</span> `income`</span>
+<span id="cb9-62"><a href="#cb9-62"></a><span class="kw">SET</span> `age_class` <span class="op">=</span> <span class="st">'adult'</span></span>
+<span id="cb9-63"><a href="#cb9-63"></a><span class="kw">WHERE</span> <span class="kw">NOT</span>(`age` <span class="op">&lt;</span> <span class="fl">18.0</span>);</span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></code></pre></div>
 <p>Note: Modification rules can be written to yaml with <code>as_yaml</code> and <code>export_yaml</code>.</p>
