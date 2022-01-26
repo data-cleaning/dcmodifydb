@@ -12,7 +12,11 @@ modifier_to_sql <- function(x, table, con = NULL){
   tc <- get_table_con(table, con, copy=FALSE)
   # print(list(table_ident = tc$table_ident))
   asgn <- get_assignments(x)
-  lapply(asgn, update_stmt, table_ident=tc$table_ident, con=tc$con)
+  lapply( asgn
+        , update_stmt, table       = tc$table
+                     , table_ident = tc$table_ident
+                     , con         = tc$con
+        )
 }
 
 #' @importFrom dbplyr ident ident_q
@@ -50,7 +54,7 @@ alter_stmt <- function(x, table, table_ident){
 }
 
 #' @importFrom dbplyr translate_sql build_sql sql
-update_stmt <- function(x, table_ident, con, ..., na.condition=FALSE){
+update_stmt <- function(x, table, table_ident, con, ..., na.condition=FALSE){
   # assumes that all columns are available...
 
   if (!is_assignment(x) && !is.symbol(x[[2]])){
@@ -66,11 +70,14 @@ update_stmt <- function(x, table_ident, con, ..., na.condition=FALSE){
   g <- guard(x)
 
   if (!is.null(g)){
-    where <- do.call(translate_sql, list(g, con = con))
+    qry_f <- eval(bquote(dplyr::filter(table, .(g))))
+    qry <- dbplyr::sql_build(qry_f)
+    where <- qry$where
     if (isTRUE(na.condition)){
       where <- build_sql("COALESCE(",where,",1)", con = con)
     }
     where <- build_sql("WHERE ", where, con = con)
+    where <- sql(where)
   }
 
   build_sql("UPDATE ", table_ident
@@ -127,6 +134,8 @@ dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
     "Generated with dcmodifydb, do not edit",
     sprintf("dcmodify version: %s", utils::packageVersion("dcmodify")),
     sprintf("dcmodifydb version: %s", utils::packageVersion("dcmodifydb")),
+    sprintf("dplyr version: %s", utils::packageVersion("dplyr")),
+    sprintf("dbplyr version: %s", utils::packageVersion("dbplyr")),
     sprintf("from: %s", org),
     if (!isTRUE(args$skip_date)){
       sprintf("date: %s", Sys.Date())
@@ -141,7 +150,7 @@ dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
     , paste(alt, collapse = "\n\n")
     , sql
     )
-  writeLines(sql)
+  writeLines(sql, con = file)
   invisible(sql)
 }
 
