@@ -199,9 +199,11 @@ modify.sql:
 -- -------------------------------------
 -- Generated with dcmodifydb, do not edit
 -- dcmodify version: 0.1.9
--- dcmodifydb version: 0.2.0
+-- dcmodifydb version: 0.2.2
+-- dplyr version: 1.0.7
+-- dbplyr version: 2.1.1
 -- from: 'example/example.yml'
--- date: 2022-01-21
+-- date: 2022-01-26
 -- -------------------------------------
 
 
