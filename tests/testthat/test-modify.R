@@ -103,4 +103,12 @@ describe("modify",{
 
   })
 
+  it("handles %in% guards", {
+    m <- modifier(if (nace %in% "A") {turnover <- 0})
+    d <- dbplyr::memdb_frame(nace = "A", turnover = 1000)
+
+    d_m <- modify(d, m, copy=TRUE)
+    expect_equal(as.data.frame(d_m), data.frame(nace = "A", turnover=0))
+  })
+
 })

@@ -46,17 +46,13 @@ modify.tbl_sql <- function( dat, x, ..., copy = NULL
   table <- tc$table
 
   working <- is_working_db(x, table)
+
   if (any(!working)){
     if (isTRUE(ignore_nw)){
       x <- x[working]
       if (all(!working)){
         return(table)
       }
-    } else {
-      stop("Modifier contains rules that are not working on the database.
-Supply `ignore_nw = TRUE`, to ignore those rules.
-Or use function `is_working_db` with `sql_warn=TRUE` to find out why
-a rule is not working", call.=FALSE)
     }
   }
 

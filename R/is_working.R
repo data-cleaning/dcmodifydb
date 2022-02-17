@@ -57,14 +57,19 @@ is_working_db <- function(m, tab, n = 2, warn = TRUE, sql_warn = FALSE){
       nw <- unique(names(working)[!working])
       nw_m <- m[nw]
       warning( "The following rule(s) are not working on the db:\n\n"
-             , paste0(nw, ": ", validate::expr(nw_m), collapse = "\n")
+             , paste0("- ", nw, ": ", validate::expr(nw_m), collapse = "\n")
+             , "\n\n--------------------------------------------------------------"
+             , "\n use 'is_working_db' with sql_warn=TRUE for more information"
+             , "\n--------------------------------------------------------------"
              , call. = FALSE
+             , immediate. = TRUE
              )
     }
     if (isTRUE(sql_warn)){
       stmt <- paste("-- Rule ", names(sql_updates)[!working], "\n", sql_updates[!working], collapse = "\n\n")
       warning("The following sql statements are not working on the database:\n\n",stmt
              , call. = FALSE
+             , immediate. = TRUE
              )
     }
   }

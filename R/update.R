@@ -70,6 +70,7 @@ update_stmt <- function(x, table, table_ident, con, ..., na.condition=FALSE){
   g <- guard(x)
 
   if (!is.null(g)){
+    g <- replace_vin(g)
     qry_f <- eval(bquote(dplyr::filter(table, .(g))))
     qry <- dbplyr::sql_build(qry_f)
     where <- qry$where
@@ -203,3 +204,17 @@ sql_comment <- function(..., sep = ""){
 }
 
 # simple approach write all assignments as update sql statements
+
+# fix for vin in validate...
+replace_vin <- function(e){
+  if (is.call(e)){
+    if (e[[1]] == "%vin%"){
+      return(substitute( a %in% b, list(a = e[[2]], b =e[[3]])))
+    }
+    e[[2]] <- replace_vin(e[[2]])
+    if (length(e) > 2){
+      e[[3]] <- replace_vin(e[[3]])
+    }
+  }
+  e
+}
