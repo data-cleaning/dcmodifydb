@@ -20,24 +20,45 @@
 #' @param x `dcmodify::modifier()` object.
 #' @param copy if `TRUE` (default), modify copy of table
 #' @param transaction if `TRUE` use one transaction for all modifications.
+#' @param ignore_nw if `TRUE` non-working rules are ignored
 #' @param ... unused
 #' @example ./example/modify.R
 #' @return [tbl_sql()] object, referencing the modified table object.
 #' @export
 setMethod("modify", signature("ANY", "modifier")
-          , function(dat, x, copy = NULL, transaction = !isTRUE(copy), ...){
+          , function(dat, x, copy = NULL, transaction = !isTRUE(copy), ignore_nw = FALSE, ...){
   if (inherits(dat, "tbl_sql")){
     return(modify.tbl_sql(dat = dat, x = x
-                          , copy = copy, transaction = transaction,...))
+                          , copy = copy, transaction = transaction, ignore_nw = ignore_nw, ...))
   }
   stop(class(dat), " not supported")
 })
 
-modify.tbl_sql <- function(dat, x, ..., copy = NULL, transaction = !isTRUE(copy)){
+modify.tbl_sql <- function( dat, x, ..., copy = NULL
+                          , transaction = !isTRUE(copy)
+                          , ignore_nw = FALSE
+                          ){
+
+
   tc <- get_table_con(dat, copy = copy)
 
   con <- tc$con
   table <- tc$table
+
+  working <- is_working_db(x, table)
+  if (any(!working)){
+    if (isTRUE(ignore_nw)){
+      x <- x[working]
+      if (all(!working)){
+        return(table)
+      }
+    } else {
+      stop("Modifier contains rules that are not working on the database.
+Supply `ignore_nw = TRUE`, to ignore those rules.
+Or use function `is_working_db` with `sql_warn=TRUE` to find out why
+a rule is not working", call.=FALSE)
+    }
+  }
 
   sql_alter <- alter_stmt(x, table, tc$table_ident)
 
@@ -46,6 +67,7 @@ modify.tbl_sql <- function(dat, x, ..., copy = NULL, transaction = !isTRUE(copy)
                                 , table = as.character(tc$table_ident)
                                 , con = con
                                 )
+
 
   if (isTRUE(transaction)){
     DBI::dbBegin(con)

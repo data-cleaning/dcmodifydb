@@ -4,7 +4,14 @@
 \alias{modify,ANY,modifier-method}
 \title{Modify records in a tbl}
 \usage{
-\S4method{modify}{ANY,modifier}(dat, x, copy = NULL, transaction = !isTRUE(copy), ...)
+\S4method{modify}{ANY,modifier}(
+  dat,
+  x,
+  copy = NULL,
+  transaction = !isTRUE(copy),
+  ignore_nw = FALSE,
+  ...
+)
 }
 \arguments{
 \item{dat}{\code{\link[=tbl_sql]{tbl_sql()}} object, table in a SQL database}
@@ -14,6 +21,8 @@
 \item{copy}{if \code{TRUE} (default), modify copy of table}
 
 \item{transaction}{if \code{TRUE} use one transaction for all modifications.}
+
+\item{ignore_nw}{if \code{TRUE} non-working rules are ignored}
 
 \item{...}{unused}
 }

@@ -4,18 +4,23 @@
 \alias{is_working_db}
 \title{Check if UPDATE statement is functional}
 \usage{
-is_working_db(updates, tab, n = 2)
+is_working_db(m, tab, n = 2, warn = TRUE, sql_warn = FALSE)
 }
 \arguments{
-\item{updates}{\code{list} of update statements object (\code{\link[=modifier_to_sql]{modifier_to_sql()}})}
+\item{m}{\code{\link[=modifier]{modifier()}} object}
 
 \item{tab}{tbl object}
 
 \item{n}{number of records to use in this check}
+
+\item{warn}{generate warnings for non-working rules}
+
+\item{sql_warn}{generate warnings with sql code for non-working rules}
 }
 \value{
 \code{logical} with which statements are working
 }
 \description{
-Get an indication of which R statement can be executed on the SQL database.
+Get an indication of which R statement can be executed on the SQL
+database.
 }

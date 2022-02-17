@@ -52,7 +52,7 @@ describe("modify",{
   })
 
   it("adds a new column", {
-    d <- tbl_memdb(data.frame(x = 1:2), "d5")
+    d <- memdb_frame(x = 1:2)
     m <- modifier(if (x > 1) y <- "two" else y <- "one")
     d_m <- modify(d, m, copy=TRUE)
 
@@ -83,6 +83,24 @@ describe("modify",{
     m <- modifier(x[is.na(x)] <- 2)
     d_m <- modify(d, m, copy=TRUE)
     expect_equal(as.data.frame(d_m), data.frame(x = c(1,2)))
+  })
+
+  it("handles a non-working rule",{
+    d <- memdb_frame(x = c(1,2))
+    m <- modifier(if (y>1) x <- 3)
+
+    expect_error({
+      expect_warning({
+        d_m <- modify(d, m, copy=TRUE)
+      })
+    })
+
+    expect_warning({
+      d_m <- modify(d, m, copy=TRUE, ignore_nw=TRUE)
+    })
+
+    expect_equal(as.data.frame(d_m), as.data.frame(d))
+
   })
 
 })
