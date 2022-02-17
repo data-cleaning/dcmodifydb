@@ -18,7 +18,7 @@ in a modifier object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dcmodifydb</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
       </span>
     </div>
 
@@ -53,7 +53,14 @@ in a modifier object.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for ANY,modifier</span>
-<span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">x</span>, copy <span class="op">=</span> <span class="cn">NULL</span>, transaction <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">copy</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span>
+  <span class="va">dat</span>,
+  <span class="va">x</span>,
+  copy <span class="op">=</span> <span class="cn">NULL</span>,
+  transaction <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/Logic.html" class="external-link">isTRUE</a></span><span class="op">(</span><span class="va">copy</span><span class="op">)</span>,
+  ignore_nw <span class="op">=</span> <span class="cn">FALSE</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -66,6 +73,8 @@ in a modifier object.</p>
 <dd><p>if <code>TRUE</code> (default), modify copy of table</p></dd>
 <dt>transaction</dt>
 <dd><p>if <code>TRUE</code> use one transaction for all modifications.</p></dd>
+<dt>ignore_nw</dt>
+<dd><p>if <code>TRUE</code> non-working rules are ignored</p></dd>
 <dt>...</dt>
 <dd><p>unused</p></dd>
 </dl></div>
@@ -104,7 +113,7 @@ all modifications are rolled back.</p></li>
 <span class="r-in"><span class="co"># "Houston, we have a table"</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl_mtcars</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database: sqlite 3.37.0 []</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database: sqlite 3.37.2 []</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cyl  gear</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     6     4</span>
@@ -119,7 +128,7 @@ all modifications are rolled back.</p></li>
 <span class="r-in"><span class="co"># and gear has changed...</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl_m</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database: sqlite 3.37.0 []</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database: sqlite 3.37.2 []</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cyl  gear</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     6    10</span>
