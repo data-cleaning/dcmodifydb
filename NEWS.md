@@ -4,3 +4,4 @@
 
 * Fix for statements using %in% (bug #2), this was due to validate which replaced it with %vin%. Thanks to Marlou van de Sande for reporting.
 
+* Tables in a schema were not working (bug issue #3), is now fixed.
