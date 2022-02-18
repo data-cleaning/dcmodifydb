@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-
 ```{r setup}
 library(dcmodify)
 library(dcmodifydb)
@@ -28,8 +27,7 @@ library(dcmodifydb)
 ## `if` rule
 
 ```{r}
-m <- modifier( if (age < 12) income = 0
-             )
+m <- modifier( if (age < 12) income = 0)
 ```
 
 The following statements are equivalent. It is wise to choose a syntax
