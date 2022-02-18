@@ -6,9 +6,7 @@
 \alias{dcmodifydb-package}
 \title{dcmodifydb: Modifying Rules on a DataBase}
 \description{
-Apply modification rules from R package 'dcmodify' to the database, 
-  prescribing and documenting deterministic data cleaning steps on records in a database.
-  The rules are translated into SQL statements using R package 'dbplyr'.
+Apply modification rules from R package 'dcmodify' to the database, prescribing and documenting deterministic data cleaning steps on records in a database. The rules are translated into SQL statements using R package 'dbplyr'.
 }
 \seealso{
 Useful links:

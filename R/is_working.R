@@ -3,6 +3,7 @@
 #' Get an indication of which R statement can be executed on the SQL
 #' database.
 #' @export
+#' @example ./example/is_working_db.R
 #' @param m [modifier()] object
 #' @param tab tbl object
 #' @param n number of records to use in this check

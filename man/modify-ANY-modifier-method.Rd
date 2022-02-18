@@ -66,6 +66,7 @@ head(tbl_mtcars)
 
 # lets modify on a copy of the table...
 tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
+
 # and gear has changed...
 head(tbl_m)
 
