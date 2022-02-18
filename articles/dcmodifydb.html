@@ -92,8 +92,7 @@
 <code>if</code> rule<a class="anchor" aria-label="anchor" href="#if-rule"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span>
-             <span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
 <p>The following statements are equivalent. It is wise to choose a syntax that is familiar to the persons specifying the correction rules.</p>
 <pre eval="FALSE"><code><span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span>  <span class="co"># R noobs</span>
 <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co"># a bit more R-y</span>
