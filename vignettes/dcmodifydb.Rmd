@@ -17,10 +17,43 @@ knitr::opts_chunk$set(
 
 # Introduction
 
+The goal of dcmodifydb is to apply modification rules specified with `dcmodify` 
+on a database table, allowing for documented, reproducable data cleaning adjustments
+in a database.
+
+`dcmodify` separates **intent** from **execution**: a user specifies _what_
+, _why_ and _how_ of an automatic data change and uses `dcmodifydb` to execute 
+them on a `tbl` database table.
+
+`dcmodidfydb` optimized and restricted to database tables that can be accessed 
+within R through `DBI`. It uses the `dbplyr` package to translate the 
+data correction rules in R syntax into SQL syntax. The advantage of this 
+approach is that all data correction is done within the database, which may be 
+a requirement of your organisation or because the data table is simply too 
+large to be held in memory. 
+The disadvantage is that not all R statements can be translated into SQL statement,
+so `dcmodifydb` is more restricted than `dcmodify` which can use the full R
+potential. Nonetheless `dcmodifydb` may be sufficient and efficient for many
+use cases.
+
+## Installation
+
+`dcmodifydb` can be installed with
+
+```{r, eval=FALSE}
+install.packages("dcmodifydb")
+```
+and loaded with:
+
 ```{r setup}
 library(dcmodify)
 library(dcmodifydb)
 ```
+
+# Error scenario's
+
+# SQL translation
+
 
 # Syntax 
 
@@ -71,6 +104,3 @@ m <- modifier(
 
 ### `else if`
 
-# Error scenario's
-
-# SQL translation
