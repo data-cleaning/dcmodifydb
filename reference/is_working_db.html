@@ -78,6 +78,42 @@ database.</p>
     <p><code>logical</code> with which statements are working</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">person</span> <span class="op">&lt;-</span> <span class="fu">dbplyr</span><span class="fu">::</span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/memdb_frame.html" class="external-link">memdb_frame</a></span><span class="op">(</span>age <span class="op">=</span> <span class="fl">12</span>, salary <span class="op">=</span> <span class="fl">3000</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodify" class="external-link">dcmodify</a></span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">correction_rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">16</span><span class="op">)</span> <span class="va">salary</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span class="r-in">                            , <span class="kw">if</span> <span class="op">(</span><span class="va">retired</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="va">salary</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span class="r-in">                            <span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># second rule is not working, because retired is not available</span></span>
+<span class="r-in"><span class="fu">is_working_db</span><span class="op">(</span><span class="va">correction_rules</span>, <span class="va">person</span>, warn <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE FALSE</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># show warnings (default)</span></span>
+<span class="r-in"><span class="fu">is_working_db</span><span class="op">(</span><span class="va">correction_rules</span>, <span class="va">person</span>, warn <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following rule(s) are not working on the db:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> - M2: if (retired == TRUE) salary = 0</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> --------------------------------------------------------------</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  use 'is_working_db' with sql_warn=TRUE for more information</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> --------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE FALSE</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># show the sql statements that are not working</span></span>
+<span class="r-in"><span class="fu">is_working_db</span><span class="op">(</span><span class="va">correction_rules</span>, <span class="va">person</span>, warn <span class="op">=</span> <span class="cn">FALSE</span>, sql_warn <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following sql statements are not working on the database:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> -- Rule  M2 </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  UPDATE `dcmodifydb_3440226`</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> SET `salary` = 0.0</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> WHERE `retired` = 1;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE FALSE</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
