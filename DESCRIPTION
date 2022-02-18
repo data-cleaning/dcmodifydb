@@ -1,6 +1,6 @@
 Package: dcmodifydb
 Title: Modifying Rules on a DataBase
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: 
     person(given = "Edwin",
            family = "de Jonge",
@@ -18,7 +18,9 @@ RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0),
     RSQLite,
-    covr
+    covr,
+    knitr,
+    rmarkdown
 Imports: 
     dplyr,
     dbplyr,
@@ -28,3 +30,4 @@ Imports:
     methods
 URL: https://github.com/data-cleaning/dcmodifydb
 BugReports: https://github.com/data-cleaning/dcmodifydb/issues
+VignetteBuilder: knitr
