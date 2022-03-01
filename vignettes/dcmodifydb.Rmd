@@ -21,17 +21,17 @@ The goal of dcmodifydb is to apply modification rules specified with `dcmodify`
 on a database table, allowing for documented, reproducable data cleaning adjustments
 in a database.
 
-`dcmodify` separates **intent** from **execution**: a user specifies _what_
+`dcmodify` separates **intent** from **execution**: a user specifies the _what_
 , _why_ and _how_ of an automatic data change and uses `dcmodifydb` to execute 
 them on a `tbl` database table.
 
-`dcmodidfydb` optimized and restricted to database tables that can be accessed 
+`dcmodidfydb` is optimized and restricted to database tables that can be accessed 
 within R through `DBI`. It uses the `dbplyr` package to translate the 
 data correction rules in R syntax into SQL syntax. The advantage of this 
 approach is that all data correction is done within the database, which may be 
 a requirement of your organisation or because the data table is simply too 
 large to be held in memory. 
-The disadvantage is that not all R statements can be translated into SQL statement,
+A disadvantage is that not all R statements can be translated into SQL statement,
 so `dcmodifydb` is more restricted than `dcmodify` which can use the full R
 potential. Nonetheless `dcmodifydb` may be sufficient and efficient for many
 use cases.
@@ -51,6 +51,51 @@ library(dcmodifydb)
 ```
 
 # Error scenario's
+
+### Replacing common mistakes
+
+
+
+```{r}
+m <- modifier( if (year < 25) year = year + 2000)
+```
+
+```{r}
+m <- modifier( if (year < 100){
+  if (year > 25) {
+    year = year + 1900
+  } else {
+    year = year + 2000
+  }
+})
+```
+
+### Replacing missing values
+
+A value is not measured (`NA`), but can be deduced to be of a certain value, e.g. zero. Suppose a health questionair contains questions if a person smokes and if so how many cigarretes per day. 
+Typically if the answer to the first question is "no", the second question is not asked an thus "unmeasured", but can be deduced to be 0.
+
+```{r, results='asis', echo=FALSE}
+d <- data.frame(smokes=c(TRUE, FALSE), cigarettes=c(10,NA))
+knitr::kable(d)
+```
+
+
+```{r, eval = FALSE}
+if (smokes ==  FALSE) cigarretes = 0
+```
+
+```{r, echo = FALSE, results='asis'}
+m <- modifier(if (smokes ==  FALSE) {
+  cigarretes = 0
+})
+dc <- modify(d, m)
+knitr::kable(dc)
+```
+
+
+### Recoding
+
 
 # SQL translation
 
