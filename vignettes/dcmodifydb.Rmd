@@ -106,14 +106,33 @@ m <- modifier( if (age < 16) income = 0
              , if (cigarrettes > 0 ) smokes = "yes"
              , if (smokes == "no") cigarrettes = 0
              , ageclass <- if (age < 18) "child" else "adult"
-             , gender <- toupper(gender)
-             , gender <- switch( gender
-                               , "V" = "F"
-                               , gender
+             , gender <- switch( toupper(gender)
+                               , "F" = "F"
+                               , "V" = "F" # common mistake
+                               , "M" = "M"
+                               , NA
                                )
              )
 
 # modify a copy of the table
+modify(person_tbl, m, copy = TRUE)
+```
+
+It is even better to document the rules using yaml: 
+
+```{r, eval=FALSE}
+export_yaml(m, "corrections.yml")
+```
+
+```yaml
+```{r, result="asis", child="corrections.yml"}
+```
+```
+
+We can load these rules with 
+
+```{r}
+m <- modifier(.file = "corrections.yml")
 modify(person_tbl, m, copy = TRUE)
 ```
 

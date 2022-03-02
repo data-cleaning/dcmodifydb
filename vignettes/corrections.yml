@@ -1,0 +1,26 @@
+rules:
+- expr: if (age < 16) income = 0
+  name: M1
+  label: 'nochildlabor'
+  description: 'Children are not allowed to work'
+- expr: if (year < 25) year = year + 2000
+  name: M2
+  label: 'longyear'
+  description: 'Convert 2 digits year into 4 digits'
+- expr: if (cigarrettes > 0) smokes = "yes"
+  name: M3
+  label: 'smoker'
+  description: 'If you smoke you are a smoker...'
+- expr: if (smokes == "no") cigarrettes = 0
+  name: M4
+  label: 'nosmoke'
+  description: 'If you dont smoke, the number of cigarettes is zero'
+- expr: ageclass <- if (age < 18) "child" else "adult"
+  name: M5
+  label: 'ageclass'
+  description: 'Derive a variable using other variables'
+- expr: gender <- switch(toupper(gender), F = "F", V = "F", M = "M", NA)
+  name: M6
+  label: 'gender'
+  description: 'Recode gender'
+
