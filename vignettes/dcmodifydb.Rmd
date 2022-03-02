@@ -36,6 +36,9 @@ so `dcmodifydb` is more restricted than `dcmodify` which can use the full R
 potential. Nonetheless `dcmodifydb` may be sufficient and efficient for many
 use cases.
 
+For common error scenario's see `vignette("scenarios", package="dcmodifydb")`. 
+For the supported syntax for specifying rules see `vignette("syntax", package="dcmodifydb")`.
+
 ## Installation
 
 `dcmodifydb` can be installed with
@@ -50,55 +53,12 @@ library(dcmodify)
 library(dcmodifydb)
 ```
 
-# SQL translation
+## Usage
 
-
-# Syntax 
-
-## `if` rule
+`dcmodifydb` works on a database table, so we need a connection to a table within
+a database. 
 
 ```{r}
-m <- modifier( if (age < 12) income = 0)
+
 ```
-
-The following statements are equivalent. It is wise to choose a syntax
-that is familiar to the persons specifying the correction rules. 
-
-```{eval=FALSE}
-if (age < 12) income = 0  # R noobs
-if (age < 12) income <- 0 # a bit more R-y
-income[age < 12] <- 0     # very R-y
-```
-
-### `else`
-
-Each `if` rule may be followed with an `else` or `else if`
-
-```{r}
-m <- modifier(if (age > 67) {retired = TRUE} else {retired = FALSE})
-```
-
-The following statements are equivalent. It is wise to choose a syntax
-that is familiar to the persons specifying the correction rules. 
-
-```{eval=FALSE}
-if (age > 67) {retired = TRUE} else {retired = FALSE} # R noobs
-if (age > 67) {retired <- TRUE} else {retired <- FALSE} # R-y
-retired <- if (age > 67) TRUE else FALSE # very R-y
-retired <- age > 67 # very R-y
-```
-
-
-### multiple assignments
-
-```{r}
-m <- modifier( 
-  if (age > 67) {
-    retired = TRUE
-    salary = 0 
-  }
-)
-```
-
-### `else if`
 
