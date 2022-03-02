@@ -106,6 +106,166 @@
 <h3 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h3>
 <p><code>dcmodifydb</code> works on a database table, so we need a connection to a table within a database.</p>
+<p>We set up a database table with sqlite using the person data set, but for your use case you should connect to your database.</p>
+<table class="table">
+<thead><tr class="header">
+<th align="right">income</th>
+<th align="right">age</th>
+<th align="left">gender</th>
+<th align="right">year</th>
+<th align="left">smokes</th>
+<th align="right">cigarrettes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">2000</td>
+<td align="right">12</td>
+<td align="left">M</td>
+<td align="right">2020</td>
+<td align="left">no</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="right">2010</td>
+<td align="right">14</td>
+<td align="left">f</td>
+<td align="right">2019</td>
+<td align="left">yes</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">25</td>
+<td align="left">v</td>
+<td align="right">19</td>
+<td align="left">no</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">":memory:"</span><span class="op">)</span>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/copy_to.html" class="external-link">copy_to</a></span><span class="op">(</span><span class="va">con</span>, <span class="va">person</span><span class="op">)</span></code></pre></div>
+<p>We know retrieve a handle to the person table using <code>dplyr</code></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">person_tbl</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span>
+<span class="va">person_tbl</span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;person&gt; [?? x 6]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<span class="co">#&gt;   income   age gender  year smokes cigarrettes</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>000    12 M       <span style="text-decoration: underline;">2</span>020 no              10</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>010    14 f       <span style="text-decoration: underline;">2</span>019 yes              4</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 v         19 no              <span style="color: #BB0000;">NA</span></span></code></pre></div>
+<p>The person dataset clearly contains some errors that should be corrected. We specify the corrections using modifier rules with the function <code>modifier</code>.</p>
+<p>First we correct that minors should not have an income and that year should be a long year.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodify" class="external-link">dcmodify</a></span><span class="op">)</span> <span class="co"># needed for modifying rules</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodifydb" class="external-link">dcmodifydb</a></span><span class="op">)</span> <span class="co"># needed to translate the rules</span>
+<span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify_so.html" class="external-link">modify_so</a></span><span class="op">(</span> <span class="va">person_tbl</span>
+         , <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">16</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span>
+         , <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">25</span><span class="op">)</span> <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">2000</span>
+         <span class="op">)</span>
+<span class="co">#&gt; Warning: `copy` not specified, setting `copy=TRUE`, working on copy of table.</span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 6]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<span class="co">#&gt;   income   age gender  year smokes cigarrettes</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 no              10</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0    14 f       <span style="text-decoration: underline;">2</span>019 yes              4</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 v       <span style="text-decoration: underline;">2</span>019 no              <span style="color: #BB0000;">NA</span></span></code></pre></div>
+<p>Note that the corrections are made on a copy of the table by default, to avoid accidents with the data. Furthermore, directly applying the rules is not optimal. It is better to specifiy the rules separately and document the rules.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># separate rule set</span>
+<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">16</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span>
+             , <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">25</span><span class="op">)</span> <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">2000</span>
+             , <span class="kw">if</span> <span class="op">(</span><span class="va">cigarrettes</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">)</span> <span class="va">smokes</span> <span class="op">=</span> <span class="st">"yes"</span>
+             , <span class="kw">if</span> <span class="op">(</span><span class="va">smokes</span> <span class="op">==</span> <span class="st">"no"</span><span class="op">)</span> <span class="va">cigarrettes</span> <span class="op">=</span> <span class="fl">0</span>
+             , <span class="va">ageclass</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">18</span><span class="op">)</span> <span class="st">"child"</span> <span class="kw">else</span> <span class="st">"adult"</span>
+             , <span class="va">gender</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">gender</span><span class="op">)</span>
+             , <span class="va">gender</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span> <span class="va">gender</span>
+                               , <span class="st">"V"</span> <span class="op">=</span> <span class="st">"F"</span>
+                               , <span class="va">gender</span>
+                               <span class="op">)</span>
+             <span class="op">)</span>
+
+<span class="co"># modify a copy of the table</span>
+<span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 6]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<span class="co">#&gt;   income   age gender  year smokes cigarrettes ageclass</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 yes             10 child   </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0    14 F       <span style="text-decoration: underline;">2</span>019 yes              4 child   </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 F       <span style="text-decoration: underline;">2</span>019 no               0 adult</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/dump_sql.html">dump_sql</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">person_tbl</span><span class="op">)</span>
+<span class="co">#&gt; -- -------------------------------------</span>
+<span class="co">#&gt; -- Generated with dcmodifydb, do not edit</span>
+<span class="co">#&gt; -- dcmodify version: 0.1.9</span>
+<span class="co">#&gt; -- dcmodifydb version: 0.3.0.9000</span>
+<span class="co">#&gt; -- dplyr version: 1.0.8</span>
+<span class="co">#&gt; -- dbplyr version: 2.1.1</span>
+<span class="co">#&gt; -- from: 'command-line'</span>
+<span class="co">#&gt; -- date: 2022-03-02</span>
+<span class="co">#&gt; -- -------------------------------------</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ALTER TABLE `person`</span>
+<span class="co">#&gt; ADD COLUMN `ageclass` character;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M1: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: if (age &lt; 16) income = 0</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `income` = 0.0</span>
+<span class="co">#&gt; WHERE `age` &lt; 16.0;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M2: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: if (year &lt; 25) year = year + 2000</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `year` = `year` + 2000.0</span>
+<span class="co">#&gt; WHERE `year` &lt; 25.0;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M3: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: if (cigarrettes &gt; 0) smokes = "yes"</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `smokes` = 'yes'</span>
+<span class="co">#&gt; WHERE `cigarrettes` &gt; 0.0;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M4: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: if (smokes == "no") cigarrettes = 0</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `cigarrettes` = 0.0</span>
+<span class="co">#&gt; WHERE `smokes` = 'no';</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M5: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: ageclass &lt;- if (age &lt; 18) "child" else "adult"</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `ageclass` = 'child'</span>
+<span class="co">#&gt; WHERE `age` &lt; 18.0;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `ageclass` = 'adult'</span>
+<span class="co">#&gt; WHERE NOT(`age` &lt; 18.0);</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M6: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: gender &lt;- toupper(gender)</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `gender` = UPPER(`gender`)</span>
+<span class="co">#&gt; ;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; -- M7: </span>
+<span class="co">#&gt; -- </span>
+<span class="co">#&gt; -- R expression: gender &lt;- switch(gender, V = "F", gender)</span>
+<span class="co">#&gt; UPDATE `person`</span>
+<span class="co">#&gt; SET `gender` = CASE `gender` WHEN ('V') THEN ('F') ELSE (`gender`) END</span>
+<span class="co">#&gt; ;</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
