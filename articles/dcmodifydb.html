@@ -41,6 +41,13 @@
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/scenarios.html">Correction scenarios</a>
+    <a class="dropdown-item" href="../articles/syntax.html">Modification syntax</a>
+  </div>
+</li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
@@ -83,6 +90,7 @@
 <p>The goal of dcmodifydb is to apply modification rules specified with <code>dcmodify</code> on a database table, allowing for documented, reproducable data cleaning adjustments in a database.</p>
 <p><code>dcmodify</code> separates <strong>intent</strong> from <strong>execution</strong>: a user specifies the <em>what</em> , <em>why</em> and <em>how</em> of an automatic data change and uses <code>dcmodifydb</code> to execute them on a <code>tbl</code> database table.</p>
 <p><code>dcmodidfydb</code> is optimized and restricted to database tables that can be accessed within R through <code>DBI</code>. It uses the <code>dbplyr</code> package to translate the data correction rules in R syntax into SQL syntax. The advantage of this approach is that all data correction is done within the database, which may be a requirement of your organisation or because the data table is simply too large to be held in memory. A disadvantage is that not all R statements can be translated into SQL statement, so <code>dcmodifydb</code> is more restricted than <code>dcmodify</code> which can use the full R potential. Nonetheless <code>dcmodifydb</code> may be sufficient and efficient for many use cases.</p>
+<p>For common error scenario’s see <code><a href="../articles/scenarios.html">vignette("scenarios", package="dcmodifydb")</a></code>. For the supported syntax for specifying rules see <code><a href="../articles/syntax.html">vignette("syntax", package="dcmodifydb")</a></code>.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
@@ -94,116 +102,10 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodify" class="external-link">dcmodify</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodifydb" class="external-link">dcmodifydb</a></span><span class="op">)</span></code></pre></div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="error-scenarios">Error scenario’s<a class="anchor" aria-label="anchor" href="#error-scenarios"></a>
-</h2>
-<div class="section level4">
-<h4 id="replacing-common-mistakes">Replacing common mistakes<a class="anchor" aria-label="anchor" href="#replacing-common-mistakes"></a>
-</h4>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">25</span><span class="op">)</span> <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">2000</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">100</span><span class="op">)</span><span class="op">{</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&gt;</span> <span class="fl">25</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">1900</span>
-  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-    <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">2000</span>
-  <span class="op">}</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="replacing-missing-values">Replacing missing values<a class="anchor" aria-label="anchor" href="#replacing-missing-values"></a>
-</h4>
-<p>A value is not measured (<code>NA</code>), but can be deduced to be of a certain value, e.g. zero. Suppose a health questionair contains questions if a person smokes and if so how many cigarretes per day. Typically if the answer to the first question is “no”, the second question is not asked an thus “unmeasured”, but can be deduced to be 0.</p>
-<table class="table">
-<thead><tr class="header">
-<th align="left">smokes</th>
-<th align="right">cigarettes</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">FALSE</td>
-<td align="right">NA</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="va">smokes</span> <span class="op">==</span>  <span class="cn">FALSE</span><span class="op">)</span> <span class="va">cigarretes</span> <span class="op">=</span> <span class="fl">0</span></code></pre></div>
-<pre><code><span class="co">#&gt; Warning in `[&lt;-.data.frame`(`*tmp*`, I, , value = structure(list(smokes =</span>
-<span class="co">#&gt; FALSE, : provided 3 variables to replace 2 variables</span></code></pre>
-<table class="table">
-<thead><tr class="header">
-<th align="left">smokes</th>
-<th align="right">cigarettes</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">TRUE</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">FALSE</td>
-<td align="right">NA</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level4">
-<h4 id="recoding">Recoding<a class="anchor" aria-label="anchor" href="#recoding"></a>
-</h4>
-</div>
-</div>
-<div class="section level2">
-<h2 id="sql-translation">SQL translation<a class="anchor" aria-label="anchor" href="#sql-translation"></a>
-</h2>
-</div>
-<div class="section level2">
-<h2 id="syntax">Syntax<a class="anchor" aria-label="anchor" href="#syntax"></a>
-</h2>
 <div class="section level3">
-<h3 id="if-rule">
-<code>if</code> rule<a class="anchor" aria-label="anchor" href="#if-rule"></a>
+<h3 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
-<p>The following statements are equivalent. It is wise to choose a syntax that is familiar to the persons specifying the correction rules.</p>
-<pre eval="FALSE"><code><span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span>  <span class="co"># R noobs</span>
-<span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">)</span> <span class="va">income</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co"># a bit more R-y</span>
-<span class="va">income</span><span class="op">[</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">12</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span>     <span class="co"># very R-y</span></code></pre>
-<div class="section level4">
-<h4 id="else">
-<code>else</code><a class="anchor" aria-label="anchor" href="#else"></a>
-</h4>
-<p>Each <code>if</code> rule may be followed with an <code>else</code> or <code>else if</code></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span><span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">67</span><span class="op">)</span> <span class="op">{</span><span class="va">retired</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="va">retired</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">}</span><span class="op">)</span></code></pre></div>
-<p>The following statements are equivalent. It is wise to choose a syntax that is familiar to the persons specifying the correction rules.</p>
-<pre eval="FALSE"><code><span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">67</span><span class="op">)</span> <span class="op">{</span><span class="va">retired</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="va">retired</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">}</span> <span class="co"># R noobs</span>
-<span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">67</span><span class="op">)</span> <span class="op">{</span><span class="va">retired</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="va">retired</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span><span class="op">}</span> <span class="co"># R-y</span>
-<span class="va">retired</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">67</span><span class="op">)</span> <span class="cn">TRUE</span> <span class="kw">else</span> <span class="cn">FALSE</span> <span class="co"># very R-y</span>
-<span class="va">retired</span> <span class="op">&lt;-</span> <span class="va">age</span> <span class="op">&gt;</span> <span class="fl">67</span> <span class="co"># very R-y</span></code></pre>
-</div>
-<div class="section level4">
-<h4 id="multiple-assignments">multiple assignments<a class="anchor" aria-label="anchor" href="#multiple-assignments"></a>
-</h4>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> 
-  <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">67</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">retired</span> <span class="op">=</span> <span class="cn">TRUE</span>
-    <span class="va">salary</span> <span class="op">=</span> <span class="fl">0</span> 
-  <span class="op">}</span>
-<span class="op">)</span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="else-if">
-<code>else if</code><a class="anchor" aria-label="anchor" href="#else-if"></a>
-</h4>
-</div>
+<p><code>dcmodifydb</code> works on a database table, so we need a connection to a table within a database.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
