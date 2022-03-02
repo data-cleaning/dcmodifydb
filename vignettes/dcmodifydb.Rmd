@@ -58,7 +58,69 @@ library(dcmodifydb)
 `dcmodifydb` works on a database table, so we need a connection to a table within
 a database. 
 
-```{r}
+We set up a database table with sqlite using the person data set, but for your 
+use case you should connect to your database.
 
+```{r, echo=FALSE}
+knitr::kable(person)
 ```
+
+
+```{r}
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+dplyr::copy_to(con, person)
+```
+
+
+We know retrieve a handle to the person table using `dplyr`
+
+```{r}
+person_tbl <- dplyr::tbl(con, "person")
+person_tbl
+```
+
+The person dataset clearly contains some errors that should be corrected. 
+We specify the corrections using modifier rules with the function `modifier`.
+
+First we correct that minors should not have an income and that year should be a
+long year.
+
+```{r}
+library(dcmodify) # needed for modifying rules
+library(dcmodifydb) # needed to translate the rules
+modify_so( person_tbl
+         , if (age < 16) income = 0
+         , if (year < 25) year = year + 2000
+         )
+```
+
+Note that the corrections are made on a copy of the table by default, to avoid 
+accidents with the data. 
+Furthermore, directly applying the rules is not optimal. It is better to specifiy the
+rules separately and document the rules.
+
+```{r}
+# separate rule set
+m <- modifier( if (age < 16) income = 0
+             , if (year < 25) year = year + 2000
+             , if (cigarrettes > 0 ) smokes = "yes"
+             , if (smokes == "no") cigarrettes = 0
+             , ageclass <- if (age < 18) "child" else "adult"
+             , gender <- toupper(gender)
+             , gender <- switch( gender
+                               , "V" = "F"
+                               , gender
+                               )
+             )
+
+# modify a copy of the table
+modify(person_tbl, m, copy = TRUE)
+```
+
+
+```{r}
+dump_sql(m, person_tbl)
+```
+
+
 

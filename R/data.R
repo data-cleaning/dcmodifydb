@@ -1,6 +1,7 @@
 #' Person data with income and smoking habits
 #'
-#' A synthetic data set with records to be corrected
+#' A synthetic data set with records to be corrected.
+#'
 #'
 #' @format A data frame with x rows and variables:
 #' \describe{
@@ -12,4 +13,6 @@
 #'   \item{cigarrettes}{how many cigarretes a person smokes}
 #'   ...
 #' }
+#' The dataset is also available as a sqlite database at
+#' `system.file("db/person.db", package="dcmodifydb")`
 "person"

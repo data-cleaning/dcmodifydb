@@ -15,11 +15,13 @@ A data frame with x rows and variables:
 \item{cigarrettes}{how many cigarretes a person smokes}
 ...
 }
+The dataset is also available as a sqlite database at
+\code{system.file("db/person.db", package="dcmodifydb")}
 }
 \usage{
 person
 }
 \description{
-A synthetic data set with records to be corrected
+A synthetic data set with records to be corrected.
 }
 \keyword{datasets}

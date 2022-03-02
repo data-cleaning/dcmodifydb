@@ -9,3 +9,8 @@ income, age, gender, year, smokes, cigarrettes
 
 usethis::use_data(person, overwrite = TRUE)
 
+
+dir.create("inst/db", showWarnings = FALSE, recursive = TRUE)
+con <- DBI::dbConnect(RSQLite::SQLite(), db = "inst/db/person.db")
+DBI::dbWriteTable(con, "person", person, overwrite=TRUE)
+DBI::dbDisconnect(con)
