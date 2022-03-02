@@ -137,15 +137,14 @@ dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
     sprintf("dplyr version: %s", utils::packageVersion("dplyr")),
     sprintf("dbplyr version: %s", utils::packageVersion("dbplyr")),
     sprintf("from: %s", org),
-    if (!isTRUE(args$skip_date)){
-      sprintf("date: %s", Sys.Date())
-    },
-
+    sprintf("date: %s", Sys.Date()),
     "-------------------------------------"
   ))
 
   sql <- c(
-    front
+    # for testing this header can be skipped otherwise generating errors when versions
+    # of packages change
+    if (!isTRUE(args$skip_header)) {front}
     , "\n"
     , paste(alt, collapse = "\n\n")
     , sql
