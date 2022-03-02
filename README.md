@@ -8,6 +8,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/dcmodifydb)](https://CRAN.R-project.org/package=dcmodifydb)
 [![R-CMD-check](https://github.com/data-cleaning/dcmodifydb/workflows/R-CMD-check/badge.svg)](https://github.com/data-cleaning/dcmodifydb/actions)
+[![Downloads](https://cranlogs.r-pkg.org/badges/dcmodifydb)](https://cran.r-project.org/package=dcmodifydb)
 [![Codecov test
 coverage](https://codecov.io/gh/data-cleaning/dcmodifydb/branch/main/graph/badge.svg)](https://codecov.io/gh/data-cleaning/dcmodifydb?branch=main)
 <!-- badges: end -->
@@ -68,6 +69,7 @@ head(tbl_mtcars)
 
 # lets modify on a copy of the table...
 tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
+
 # and gear has changed...
 head(tbl_m)
 #> # Source:   lazy query [?? x 2]
@@ -199,11 +201,11 @@ modify.sql:
 -- -------------------------------------
 -- Generated with dcmodifydb, do not edit
 -- dcmodify version: 0.1.9
--- dcmodifydb version: 0.3.0
+-- dcmodifydb version: 0.3.0.9000
 -- dplyr version: 1.0.7
 -- dbplyr version: 2.1.1
 -- from: 'example/example.yml'
--- date: 2022-02-18
+-- date: 2022-03-02
 -- -------------------------------------
 
 
