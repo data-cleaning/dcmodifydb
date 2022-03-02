@@ -10,3 +10,5 @@
 ^pkgdown$
 ^codecov\.yml$
 ^issues
+^dbtest$
+^data-raw$
