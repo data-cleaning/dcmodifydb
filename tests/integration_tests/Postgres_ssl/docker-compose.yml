@@ -1,0 +1,41 @@
+version: '3.7'
+
+
+volumes:
+  pgdata:
+
+
+
+
+services:
+    r_testing:
+        tty: true
+        container_name: r_testing
+        command: Rscript --no-save basic_run.R
+        build: dcmodifyDB
+        volumes:
+          - type: "bind"
+            source: "g:/scripts/R/packages/testing_dcmodifydb/dcmodifyDB"
+            target: "/code"
+        depends_on:
+          - "db"
+        volumes:
+          - ./dcmodifyDB:/code
+    db:
+      container_name: "db"
+      image: postgres:12
+      volumes:
+        - type: "bind"
+          source: "g:/scripts/R/packages/testing_dcmodifydb/database"
+          target: /pgdata
+      environment:
+        POSTGRES_DB: "r_testing"
+        POSTGRES_USER: "admin"
+        POSTGRES_PASSWORD: "admin"
+      ports:
+        - "5432:5432"
+
+
+
+volumes:
+  dev-postgres-run:
