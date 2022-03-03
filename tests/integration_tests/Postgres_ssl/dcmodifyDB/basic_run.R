@@ -1,11 +1,10 @@
-#install.packages("odbc")
-#install.packages("RPostgres")
+
 library(DBI)
 library(dcmodify)
+
 library(dcmodifydb)
 library(odbc)
-print(sessionInfo())
-flush.console()
+
 
 # silly modification rules
 m <- modifier( if (cyl == 6)  gear <- 10
@@ -20,21 +19,15 @@ con <- dbConnect(RPostgres::Postgres(),
                  port = 5432,
                  user   = "admin",
                  password    = "admin",)
-dbWriteTable(con, "mtcars", mtcars[,c("cyl", "gear")])
+                 dbRemoveTable(con, "mtcars")
+# Table might already exist in db so delete it and fail silently
+
+dbWriteTable(con, "mtcars", mtcars[,c("cyl", "gear")], overwrite = TRUE)
 tbl_mtcars <- dplyr::tbl(con, "mtcars")
 
 # "Houston, we have a table"
 head(tbl_mtcars)
-#> # Source:   lazy query [?? x 2]
-#> # Database: sqlite 3.35.5 []
-#>     cyl  gear
-#>   <dbl> <dbl>
-#> 1     6     4
-#> 2     6     4
-#> 3     4     4
-#> 4     6     3
-#> 5     8     3
-#> 6     6     3
+
 
 # lets modify on a copy of the table...
 tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
