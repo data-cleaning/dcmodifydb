@@ -57,7 +57,7 @@ tbl_mtcars <- dplyr::tbl(con, "mtcars")
 # "Houston, we have a table"
 head(tbl_mtcars)
 #> # Source:   lazy query [?? x 2]
-#> # Database: sqlite 3.35.5 []
+#> # Database: sqlite 3.36.0 []
 #>     cyl  gear
 #>   <dbl> <dbl>
 #> 1     6     4
@@ -73,7 +73,7 @@ tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
 # and gear has changed...
 head(tbl_m)
 #> # Source:   lazy query [?? x 2]
-#> # Database: sqlite 3.35.5 []
+#> # Database: sqlite 3.36.0 []
 #>     cyl  gear
 #>   <dbl> <dbl>
 #> 1     6    10
@@ -169,7 +169,7 @@ tbl_income <- dplyr::tbl(con, "income")
 # this is the table in the data base
 tbl_income
 #> # Source:   table<income> [?? x 2]
-#> # Database: sqlite 3.35.5 []
+#> # Database: sqlite 3.36.0 []
 #>     age income
 #>   <int>  <int>
 #> 1    11   2000
@@ -180,7 +180,7 @@ tbl_income
 # and now after modification
 modify(tbl_income, m, copy = FALSE) 
 #> # Source:   table<income> [?? x 2]
-#> # Database: sqlite 3.35.5 []
+#> # Database: sqlite 3.36.0 []
 #>     age income retired age_class
 #>   <int>  <int>   <int> <chr>    
 #> 1    11      0       0 child    
@@ -205,15 +205,15 @@ modify.sql:
 -- dplyr version: 1.0.7
 -- dbplyr version: 2.1.1
 -- from: 'example/example.yml'
--- date: 2022-03-02
+-- date: 2022-03-07
 -- -------------------------------------
 
 
 ALTER TABLE `income`
-ADD COLUMN `retired` integer;
+ADD COLUMN `retired` INT;
 
 ALTER TABLE `income`
-ADD COLUMN `age_class` character;
+ADD COLUMN `age_class` TEXT;
 
 -- M1: Maximum age
 -- Human age is limited. (can use  "=")
