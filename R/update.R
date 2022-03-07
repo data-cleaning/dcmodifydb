@@ -20,7 +20,7 @@ modifier_to_sql <- function(x, table, con = NULL){
 }
 
 #' @importFrom dbplyr ident ident_q
-alter_stmt <- function(x, table, table_ident){
+alter_stmt <- function(x, table, table_ident, con){
   org_vars <- dplyr::tbl_vars(table)
 
   # just for querying meta data
@@ -35,19 +35,25 @@ alter_stmt <- function(x, table, table_ident){
 
   names(asgns) <- vars
   mut <- bquote(dplyr::mutate(tab, ..(asgns)), splice = TRUE)
-  tab <- eval(mut)
-  qry <- dbplyr::remote_query(tab)
+  tab <- utils::head(eval(mut))
 
-  rs <- DBI::dbSendQuery(con, qry)
-  ci <- DBI::dbColumnInfo(rs)
-  DBI::dbClearResult(rs)
+  # getting datatypes
+  df <- as.data.frame(tab)
+  types <- DBI::dbDataType(con, df)
+  #print(types)
 
-  new_vars <- ci[!(ci$name %in% org_vars),]
+  # qry <- dbplyr::remote_query(tab)
+  #
+  # rs <- DBI::dbSendQuery(con, qry)
+  # ci <- DBI::dbColumnInfo(rs)
+  # DBI::dbClearResult(rs)
 
-  lapply(new_vars$name, function(n){
+  new_vars <- types[!names(types) %in% org_vars]
+
+  lapply(names(new_vars), function(n){
     build_sql(
       "ALTER TABLE ", sql(table_ident),
-      "\nADD COLUMN ", ident(n), " ", sql(new_vars$type[new_vars$name == n]), ";"
+      "\nADD COLUMN ", ident(n), " ", unname(sql(new_vars[n])), ";"
       , con = con
       )
   })
@@ -107,7 +113,7 @@ update_stmt <- function(x, table, table_ident, con, ..., na.condition=FALSE){
 dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
   tc <- get_table_con(table, con, copy=FALSE)
 
-  alt <- alter_stmt(x, tc$table, tc$table_ident)
+  alt <- alter_stmt(x, tc$table, tc$table_ident, con = con)
   sql <- modifier_to_sql(x, tc$table)
 
   # TODO write expression!
