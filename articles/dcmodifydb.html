@@ -157,7 +157,7 @@
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>000    12 M       <span style="text-decoration: underline;">2</span>020 no              10</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>010    14 f       <span style="text-decoration: underline;">2</span>019 yes              4</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 v         19 no              <span style="color: #BB0000;">NA</span></span></code></pre></div>
-<p>The person dataset clearly contains some errors that should be corrected. We specify the corrections using modifier rules with the function <code>modifier</code>.</p>
+<p>The person dataset clearly contains some errors that should be corrected. We specify the corrections using modifier rules and apply them directly with the function<code>modify_so</code>.</p>
 <p>First we correct that minors should not have an income and that year should be a long year.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodify" class="external-link">dcmodify</a></span><span class="op">)</span> <span class="co"># needed for modifying rules</span>
@@ -174,7 +174,8 @@
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 no              10</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0    14 f       <span style="text-decoration: underline;">2</span>019 yes              4</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 v       <span style="text-decoration: underline;">2</span>019 no              <span style="color: #BB0000;">NA</span></span></code></pre></div>
-<p>Note that the corrections are made on a copy of the table by default, to avoid accidents with the data. Furthermore, directly applying the rules is not optimal. It is better to specifiy the rules separately and document the rules.</p>
+<p>Note that the corrections are made on a copy of the table by default, to avoid accidents with the data.</p>
+<p>A better approach is to store the rules separately and apply them to a datatable. This makes it easier to maintain a set of rules. With <code>dcmodify</code> one can specify rules with the function <code>modifier</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># separate rule set</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">16</span><span class="op">)</span> <span class="va">income</span> <span class="op">=</span> <span class="fl">0</span>
@@ -186,11 +187,35 @@
                                , <span class="st">"F"</span> <span class="op">=</span> <span class="st">"F"</span>
                                , <span class="st">"V"</span> <span class="op">=</span> <span class="st">"F"</span> <span class="co"># common mistake</span>
                                , <span class="st">"M"</span> <span class="op">=</span> <span class="st">"M"</span>
-                               , <span class="cn">NA</span>
+                               , <span class="st">"NB"</span>
                                <span class="op">)</span>
-             <span class="op">)</span>
-
-<span class="co"># modify a copy of the table</span>
+             <span class="op">)</span></code></pre></div>
+<p><code>m</code> is now a set of rules that can be applied to a <code>data.frame</code> or <code>tbl</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>
+<span class="co">#&gt; Object of class modifier with 6 elements:</span>
+<span class="co">#&gt; M1: </span>
+<span class="co">#&gt;   if (age &lt; 16) income = 0</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; M2: </span>
+<span class="co">#&gt;   if (year &lt; 25) year = year + 2000</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; M3: </span>
+<span class="co">#&gt;   if (cigarrettes &gt; 0) smokes = "yes"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; M4: </span>
+<span class="co">#&gt;   if (smokes == "no") cigarrettes = 0</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; M5: </span>
+<span class="co">#&gt;   ageclass &lt;- if (age &lt; 18) "child" else "adult"</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; M6: </span>
+<span class="co">#&gt;   gender &lt;- switch(toupper(gender), F = "F", V = "F", M = "M", "NB")</span></code></pre></div>
+<p>Note that the rules are executed in sequentially, in the order that they are given. For example the order of rule M3 and M4 matters: Rule M3 will change record 1 to a smoker, while rule M4 would set the number of cigarettes to 0. This is intentional: correction rules often have an order in which they have to be applied.</p>
+<p>Rule M5 shows an example of deriving a new variable (<code>ageclass</code>) from existing variables (<code>age</code>).</p>
+<p>Rule M6 shows an example of recoding, changing labels of categories to the allowed set of labels.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># modify a copy of the table</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 6]</span></span>
 <span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
@@ -199,37 +224,45 @@
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 yes             10 child   </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0    14 F       <span style="text-decoration: underline;">2</span>019 yes              4 child   </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 F       <span style="text-decoration: underline;">2</span>019 no               0 adult</span></code></pre></div>
-<p>It is even better to document the rules using yaml:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/validate/man/export_yaml.html" class="external-link">export_yaml</a></span><span class="op">(</span><span class="va">m</span>, <span class="st">"corrections.yml"</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1"></a></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="fu">rules</span><span class="kw">:</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &lt; 16) income = 0</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M1</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'nochildlabor'</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Children are not allowed to work'</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (year &lt; 25) year = year + 2000</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M2</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'longyear'</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Convert 2 digits year into 4 digits'</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (cigarrettes &gt; 0) smokes = "yes"</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M3</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'smoker'</span></span>
-<span id="cb8-14"><a href="#cb8-14"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'If you smoke you are a smoker...'</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (smokes == "no") cigarrettes = 0</span></span>
-<span id="cb8-16"><a href="#cb8-16"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M4</span></span>
-<span id="cb8-17"><a href="#cb8-17"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'nosmoke'</span></span>
-<span id="cb8-18"><a href="#cb8-18"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'If you dont smoke, the number of cigarettes is zero'</span></span>
-<span id="cb8-19"><a href="#cb8-19"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> ageclass &lt;- if (age &lt; 18) "child" else "adult"</span></span>
-<span id="cb8-20"><a href="#cb8-20"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M5</span></span>
-<span id="cb8-21"><a href="#cb8-21"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'ageclass'</span></span>
-<span id="cb8-22"><a href="#cb8-22"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Derive a variable using other variables'</span></span>
-<span id="cb8-23"><a href="#cb8-23"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> gender &lt;- switch(toupper(gender), F = "F", V = "F", M = "M", NA)</span></span>
-<span id="cb8-24"><a href="#cb8-24"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M6</span></span>
-<span id="cb8-25"><a href="#cb8-25"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'gender'</span></span>
-<span id="cb8-26"><a href="#cb8-26"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Recode gender'</span></span></code></pre></div>
-<p>We can load these rules with</p>
+<p>A nice properties of <code>modifier</code> rules, is that they can store extra metadata. They have a <code>name</code>, <code>label</code> and <code>description</code> that can be used to describe the intention and the why of a rule. An easy way of describing these properties is by exporting the ruleset to yaml and specify the rules using the yaml file.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/validate/man/export_yaml.html" class="external-link">export_yaml</a></span><span class="op">(</span><span class="va">m</span>, <span class="st">"corrections.yml"</span><span class="op">)</span></code></pre></div>
+<p>In the export yml file we can label and describe the rules, but also add new rules. Note that label and description are optional, but very much encouraged.</p>
+<p><em>corrections.yml</em></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="fu">rules</span><span class="kw">:</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (age &lt; 16) income = 0</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M1</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'nochildlabor'</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Children are not allowed to work'</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (year &lt; 25) year = year + 2000</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M2</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'longyear'</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Convert 2 digits year into 4 digits'</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (cigarrettes &gt; 0) smokes = "yes"</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M3</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'smoker'</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'If you smoke you are a smoker...'</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> if (smokes == "no") cigarrettes = 0</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M4</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'nosmoke'</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'If you dont smoke, the number of cigarettes is zero'</span></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="kw">-</span><span class="at"> </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> ageclass &lt;- if (age &lt; 18) "child" else "adult"</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M5</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'ageclass'</span></span>
+<span id="cb10-22"><a href="#cb10-22"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Derive a new variable ageclass using the age variable'</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a><span class="kw">- </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb10-24"><a href="#cb10-24"></a>    gender &lt;- switch( toupper(gender)</span>
+<span id="cb10-25"><a href="#cb10-25"></a>                    , F = "F"</span>
+<span id="cb10-26"><a href="#cb10-26"></a>                    , V = "F"</span>
+<span id="cb10-27"><a href="#cb10-27"></a>                    , M = "M"</span>
+<span id="cb10-28"><a href="#cb10-28"></a>                    , "NB"</span>
+<span id="cb10-29"><a href="#cb10-29"></a>                    )</span>
+<span id="cb10-30"><a href="#cb10-30"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> M6</span></span>
+<span id="cb10-31"><a href="#cb10-31"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> </span><span class="st">'gender'</span></span>
+<span id="cb10-32"><a href="#cb10-32"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">'Map the labels for gender to M/F/NB'</span></span></code></pre></div>
+<p>We can load these rules with:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span>.file <span class="op">=</span> <span class="st">"corrections.yml"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   lazy query [?? x 6]</span></span>
@@ -239,68 +272,69 @@
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 yes             10 child   </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0    14 F       <span style="text-decoration: underline;">2</span>019 yes              4 child   </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>010    25 F       <span style="text-decoration: underline;">2</span>019 no               0 adult</span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/dump_sql.html">dump_sql</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">person_tbl</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1"></a></span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">-- -------------------------------------</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">-- Generated with dcmodifydb, do not edit</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co">-- dcmodify version: 0.1.9</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="co">-- dcmodifydb version: 0.3.0.9000</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="co">-- dplyr version: 1.0.8</span></span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="co">-- dbplyr version: 2.1.1</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="co">-- from: 'corrections.yml'</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="co">-- date: 2022-03-08</span></span>
-<span id="cb11-10"><a href="#cb11-10"></a><span class="co">-- -------------------------------------</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a></span>
-<span id="cb11-12"><a href="#cb11-12"></a></span>
-<span id="cb11-13"><a href="#cb11-13"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `person`</span>
-<span id="cb11-14"><a href="#cb11-14"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `ageclass` TEXT;</span>
-<span id="cb11-15"><a href="#cb11-15"></a></span>
-<span id="cb11-16"><a href="#cb11-16"></a><span class="co">-- M1: nochildlabor</span></span>
-<span id="cb11-17"><a href="#cb11-17"></a><span class="co">-- Children are not allowed to work</span></span>
-<span id="cb11-18"><a href="#cb11-18"></a><span class="co">-- R expression: if (age &lt; 16) income = 0</span></span>
-<span id="cb11-19"><a href="#cb11-19"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-20"><a href="#cb11-20"></a><span class="kw">SET</span> `income` <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb11-21"><a href="#cb11-21"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">16.0</span>;</span>
-<span id="cb11-22"><a href="#cb11-22"></a></span>
-<span id="cb11-23"><a href="#cb11-23"></a><span class="co">-- M2: longyear</span></span>
-<span id="cb11-24"><a href="#cb11-24"></a><span class="co">-- Convert 2 digits year into 4 digits</span></span>
-<span id="cb11-25"><a href="#cb11-25"></a><span class="co">-- R expression: if (year &lt; 25) year = year + 2000</span></span>
-<span id="cb11-26"><a href="#cb11-26"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-27"><a href="#cb11-27"></a><span class="kw">SET</span> `year` <span class="op">=</span> `year` <span class="op">+</span> <span class="fl">2000.0</span></span>
-<span id="cb11-28"><a href="#cb11-28"></a><span class="kw">WHERE</span> `year` <span class="op">&lt;</span> <span class="fl">25.0</span>;</span>
-<span id="cb11-29"><a href="#cb11-29"></a></span>
-<span id="cb11-30"><a href="#cb11-30"></a><span class="co">-- M3: smoker</span></span>
-<span id="cb11-31"><a href="#cb11-31"></a><span class="co">-- If you smoke you are a smoker...</span></span>
-<span id="cb11-32"><a href="#cb11-32"></a><span class="co">-- R expression: if (cigarrettes &gt; 0) smokes = "yes"</span></span>
-<span id="cb11-33"><a href="#cb11-33"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-34"><a href="#cb11-34"></a><span class="kw">SET</span> `smokes` <span class="op">=</span> <span class="st">'yes'</span></span>
-<span id="cb11-35"><a href="#cb11-35"></a><span class="kw">WHERE</span> `cigarrettes` <span class="op">&gt;</span> <span class="fl">0.0</span>;</span>
-<span id="cb11-36"><a href="#cb11-36"></a></span>
-<span id="cb11-37"><a href="#cb11-37"></a><span class="co">-- M4: nosmoke</span></span>
-<span id="cb11-38"><a href="#cb11-38"></a><span class="co">-- If you dont smoke, the number of cigarettes is zero</span></span>
-<span id="cb11-39"><a href="#cb11-39"></a><span class="co">-- R expression: if (smokes == "no") cigarrettes = 0</span></span>
-<span id="cb11-40"><a href="#cb11-40"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-41"><a href="#cb11-41"></a><span class="kw">SET</span> `cigarrettes` <span class="op">=</span> <span class="fl">0.0</span></span>
-<span id="cb11-42"><a href="#cb11-42"></a><span class="kw">WHERE</span> `smokes` <span class="op">=</span> <span class="st">'no'</span>;</span>
-<span id="cb11-43"><a href="#cb11-43"></a></span>
-<span id="cb11-44"><a href="#cb11-44"></a><span class="co">-- M5: ageclass</span></span>
-<span id="cb11-45"><a href="#cb11-45"></a><span class="co">-- Derive a variable using other variables</span></span>
-<span id="cb11-46"><a href="#cb11-46"></a><span class="co">-- R expression: ageclass &lt;- if (age &lt; 18) "child" else "adult"</span></span>
-<span id="cb11-47"><a href="#cb11-47"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-48"><a href="#cb11-48"></a><span class="kw">SET</span> `ageclass` <span class="op">=</span> <span class="st">'child'</span></span>
-<span id="cb11-49"><a href="#cb11-49"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">18.0</span>;</span>
-<span id="cb11-50"><a href="#cb11-50"></a></span>
-<span id="cb11-51"><a href="#cb11-51"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-52"><a href="#cb11-52"></a><span class="kw">SET</span> `ageclass` <span class="op">=</span> <span class="st">'adult'</span></span>
-<span id="cb11-53"><a href="#cb11-53"></a><span class="kw">WHERE</span> <span class="kw">NOT</span>(`age` <span class="op">&lt;</span> <span class="fl">18.0</span>);</span>
-<span id="cb11-54"><a href="#cb11-54"></a></span>
-<span id="cb11-55"><a href="#cb11-55"></a><span class="co">-- M6: gender</span></span>
-<span id="cb11-56"><a href="#cb11-56"></a><span class="co">-- Recode gender</span></span>
-<span id="cb11-57"><a href="#cb11-57"></a><span class="co">-- R expression: gender &lt;- switch(toupper(gender), F = "F", V = "F", M = "M", NA)</span></span>
-<span id="cb11-58"><a href="#cb11-58"></a><span class="kw">UPDATE</span> `person`</span>
-<span id="cb11-59"><a href="#cb11-59"></a><span class="kw">SET</span> `gender` <span class="op">=</span> <span class="cf">CASE</span> <span class="fu">UPPER</span>(`gender`) <span class="cf">WHEN</span> (<span class="st">'F'</span>) <span class="cf">THEN</span> (<span class="st">'F'</span>) <span class="cf">WHEN</span> (<span class="st">'V'</span>) <span class="cf">THEN</span> (<span class="st">'F'</span>) <span class="cf">WHEN</span> (<span class="st">'M'</span>) <span class="cf">THEN</span> (<span class="st">'M'</span>) <span class="cf">ELSE</span> (<span class="kw">NULL</span>) <span class="cf">END</span></span>
-<span id="cb11-60"><a href="#cb11-60"></a>;</span></code></pre></div>
+<p><code>modify</code> translates the modification rules into SQL code and executes the sql queries on the database. For documentation or implementation purpose it can be useful to see the generated sql code, with the documented rules.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/dump_sql.html">dump_sql</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">person_tbl</span>, file <span class="op">=</span> <span class="st">"corrections.sql"</span><span class="op">)</span></code></pre></div>
+<p><em>corrections.sql</em>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">-- -------------------------------------</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co">-- Generated with dcmodifydb, do not edit</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co">-- dcmodify version: 0.1.9</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co">-- dcmodifydb version: 0.3.0.9000</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co">-- dplyr version: 1.0.8</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">-- dbplyr version: 2.1.1</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="co">-- from: 'corrections.yml'</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co">-- date: 2022-03-08</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co">-- -------------------------------------</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a></span>
+<span id="cb13-11"><a href="#cb13-11"></a></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `person`</span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `ageclass` TEXT;</span>
+<span id="cb13-14"><a href="#cb13-14"></a></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co">-- M1: nochildlabor</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="co">-- Children are not allowed to work</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="co">-- R expression: if (age &lt; 16) income = 0</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="kw">SET</span> `income` <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">16.0</span>;</span>
+<span id="cb13-21"><a href="#cb13-21"></a></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="co">-- M2: longyear</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a><span class="co">-- Convert 2 digits year into 4 digits</span></span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="co">-- R expression: if (year &lt; 25) year = year + 2000</span></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="kw">SET</span> `year` <span class="op">=</span> `year` <span class="op">+</span> <span class="fl">2000.0</span></span>
+<span id="cb13-27"><a href="#cb13-27"></a><span class="kw">WHERE</span> `year` <span class="op">&lt;</span> <span class="fl">25.0</span>;</span>
+<span id="cb13-28"><a href="#cb13-28"></a></span>
+<span id="cb13-29"><a href="#cb13-29"></a><span class="co">-- M3: smoker</span></span>
+<span id="cb13-30"><a href="#cb13-30"></a><span class="co">-- If you smoke you are a smoker...</span></span>
+<span id="cb13-31"><a href="#cb13-31"></a><span class="co">-- R expression: if (cigarrettes &gt; 0) smokes = "yes"</span></span>
+<span id="cb13-32"><a href="#cb13-32"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-33"><a href="#cb13-33"></a><span class="kw">SET</span> `smokes` <span class="op">=</span> <span class="st">'yes'</span></span>
+<span id="cb13-34"><a href="#cb13-34"></a><span class="kw">WHERE</span> `cigarrettes` <span class="op">&gt;</span> <span class="fl">0.0</span>;</span>
+<span id="cb13-35"><a href="#cb13-35"></a></span>
+<span id="cb13-36"><a href="#cb13-36"></a><span class="co">-- M4: nosmoke</span></span>
+<span id="cb13-37"><a href="#cb13-37"></a><span class="co">-- If you dont smoke, the number of cigarettes is zero</span></span>
+<span id="cb13-38"><a href="#cb13-38"></a><span class="co">-- R expression: if (smokes == "no") cigarrettes = 0</span></span>
+<span id="cb13-39"><a href="#cb13-39"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-40"><a href="#cb13-40"></a><span class="kw">SET</span> `cigarrettes` <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb13-41"><a href="#cb13-41"></a><span class="kw">WHERE</span> `smokes` <span class="op">=</span> <span class="st">'no'</span>;</span>
+<span id="cb13-42"><a href="#cb13-42"></a></span>
+<span id="cb13-43"><a href="#cb13-43"></a><span class="co">-- M5: ageclass</span></span>
+<span id="cb13-44"><a href="#cb13-44"></a><span class="co">-- Derive a new variable ageclass using the age variable</span></span>
+<span id="cb13-45"><a href="#cb13-45"></a><span class="co">-- R expression: ageclass &lt;- if (age &lt; 18) "child" else "adult"</span></span>
+<span id="cb13-46"><a href="#cb13-46"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-47"><a href="#cb13-47"></a><span class="kw">SET</span> `ageclass` <span class="op">=</span> <span class="st">'child'</span></span>
+<span id="cb13-48"><a href="#cb13-48"></a><span class="kw">WHERE</span> `age` <span class="op">&lt;</span> <span class="fl">18.0</span>;</span>
+<span id="cb13-49"><a href="#cb13-49"></a></span>
+<span id="cb13-50"><a href="#cb13-50"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-51"><a href="#cb13-51"></a><span class="kw">SET</span> `ageclass` <span class="op">=</span> <span class="st">'adult'</span></span>
+<span id="cb13-52"><a href="#cb13-52"></a><span class="kw">WHERE</span> <span class="kw">NOT</span>(`age` <span class="op">&lt;</span> <span class="fl">18.0</span>);</span>
+<span id="cb13-53"><a href="#cb13-53"></a></span>
+<span id="cb13-54"><a href="#cb13-54"></a><span class="co">-- M6: gender</span></span>
+<span id="cb13-55"><a href="#cb13-55"></a><span class="co">-- Map the labels for gender to M/F/NB</span></span>
+<span id="cb13-56"><a href="#cb13-56"></a><span class="co">-- R expression: gender &lt;- switch(toupper(gender), F = "F", V = "F", M = "M", "NB")</span></span>
+<span id="cb13-57"><a href="#cb13-57"></a><span class="kw">UPDATE</span> `person`</span>
+<span id="cb13-58"><a href="#cb13-58"></a><span class="kw">SET</span> `gender` <span class="op">=</span> <span class="cf">CASE</span> <span class="fu">UPPER</span>(`gender`) <span class="cf">WHEN</span> (<span class="st">'F'</span>) <span class="cf">THEN</span> (<span class="st">'F'</span>) <span class="cf">WHEN</span> (<span class="st">'V'</span>) <span class="cf">THEN</span> (<span class="st">'F'</span>) <span class="cf">WHEN</span> (<span class="st">'M'</span>) <span class="cf">THEN</span> (<span class="st">'M'</span>) <span class="cf">ELSE</span> (<span class="st">'NB'</span>) <span class="cf">END</span></span>
+<span id="cb13-59"><a href="#cb13-59"></a>;</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
