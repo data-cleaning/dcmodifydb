@@ -80,7 +80,7 @@
 <!-- badges: start -->
 
 <p>The goal of dcmodifydb is to apply modification rules specified with <code>dcmodify</code> on a database table, allowing for documented, reproducable data cleaning adjustments in a database.</p>
-<p><code>dcmodifydb</code> separates <strong>intent</strong> from <strong>execution</strong>: a user specifies <em>what</em>, <em>why</em> and <em>how</em> of an automatic data change and uses dcmodify to execute them on a <code>tbl</code> database table.</p>
+<p><code>dcmodify</code> separates <strong>intent</strong> from <strong>execution</strong>: a user specifies <em>what</em>, <em>why</em> and <em>how</em> of an automatic data change and uses <code>dcmodifydb</code> to execute them on a <code>tbl</code> database table.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -115,7 +115,7 @@
 <span class="co"># "Houston, we have a table"</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl_mtcars</span><span class="op">)</span>
 <span class="co">#&gt; # Source:   lazy query [?? x 2]</span>
-<span class="co">#&gt; # Database: sqlite 3.35.5 []</span>
+<span class="co">#&gt; # Database: sqlite 3.36.0 []</span>
 <span class="co">#&gt;     cyl  gear</span>
 <span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     6     4</span>
@@ -131,7 +131,7 @@
 <span class="co"># and gear has changed...</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl_m</span><span class="op">)</span>
 <span class="co">#&gt; # Source:   lazy query [?? x 2]</span>
-<span class="co">#&gt; # Database: sqlite 3.35.5 []</span>
+<span class="co">#&gt; # Database: sqlite 3.36.0 []</span>
 <span class="co">#&gt;     cyl  gear</span>
 <span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     6    10</span>
@@ -215,7 +215,7 @@
 <span class="co"># this is the table in the data base</span>
 <span class="va">tbl_income</span>
 <span class="co">#&gt; # Source:   table&lt;income&gt; [?? x 2]</span>
-<span class="co">#&gt; # Database: sqlite 3.35.5 []</span>
+<span class="co">#&gt; # Database: sqlite 3.36.0 []</span>
 <span class="co">#&gt;     age income</span>
 <span class="co">#&gt;   &lt;int&gt;  &lt;int&gt;</span>
 <span class="co">#&gt; 1    11   2000</span>
@@ -226,7 +226,7 @@
 <span class="co"># and now after modification</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">tbl_income</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> 
 <span class="co">#&gt; # Source:   table&lt;income&gt; [?? x 2]</span>
-<span class="co">#&gt; # Database: sqlite 3.35.5 []</span>
+<span class="co">#&gt; # Database: sqlite 3.36.0 []</span>
 <span class="co">#&gt;     age income retired age_class</span>
 <span class="co">#&gt;   &lt;int&gt;  &lt;int&gt;   &lt;int&gt; &lt;chr&gt;    </span>
 <span class="co">#&gt; 1    11      0       0 child    </span>
@@ -244,15 +244,15 @@
 <span id="cb9-5"><a href="#cb9-5"></a><span class="co">-- dplyr version: 1.0.7</span></span>
 <span id="cb9-6"><a href="#cb9-6"></a><span class="co">-- dbplyr version: 2.1.1</span></span>
 <span id="cb9-7"><a href="#cb9-7"></a><span class="co">-- from: 'example/example.yml'</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">-- date: 2022-03-02</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">-- date: 2022-03-08</span></span>
 <span id="cb9-9"><a href="#cb9-9"></a><span class="co">-- -------------------------------------</span></span>
 <span id="cb9-10"><a href="#cb9-10"></a></span>
 <span id="cb9-11"><a href="#cb9-11"></a></span>
 <span id="cb9-12"><a href="#cb9-12"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `retired` <span class="dt">integer</span>;</span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `retired` <span class="dt">INT</span>;</span>
 <span id="cb9-14"><a href="#cb9-14"></a></span>
 <span id="cb9-15"><a href="#cb9-15"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> `income`</span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `age_class` <span class="dt">character</span>;</span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="kw">ADD</span> <span class="kw">COLUMN</span> `age_class` TEXT;</span>
 <span id="cb9-17"><a href="#cb9-17"></a></span>
 <span id="cb9-18"><a href="#cb9-18"></a><span class="co">-- M1: Maximum age</span></span>
 <span id="cb9-19"><a href="#cb9-19"></a><span class="co">-- Human age is limited. (can use  "=")</span></span>
