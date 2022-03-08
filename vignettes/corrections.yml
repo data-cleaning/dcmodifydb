@@ -18,9 +18,15 @@ rules:
 - expr: ageclass <- if (age < 18) "child" else "adult"
   name: M5
   label: 'ageclass'
-  description: 'Derive a variable using other variables'
-- expr: gender <- switch(toupper(gender), F = "F", V = "F", M = "M", NA)
+  description: 'Derive a new variable ageclass using the age variable'
+- expr: |
+    gender <- switch( toupper(gender)
+                    , F = "F"
+                    , V = "F"
+                    , M = "M"
+                    , "NB"
+                    )
   name: M6
   label: 'gender'
-  description: 'Recode gender'
+  description: 'Map the labels for gender to M/F/NB'
 

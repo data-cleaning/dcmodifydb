@@ -80,7 +80,8 @@ person_tbl
 ```
 
 The person dataset clearly contains some errors that should be corrected. 
-We specify the corrections using modifier rules with the function `modifier`.
+We specify the corrections using modifier rules and apply them directly with 
+the function`modify_so`.
 
 First we correct that minors should not have an income and that year should be a
 long year.
@@ -95,9 +96,11 @@ modify_so( person_tbl
 ```
 
 Note that the corrections are made on a copy of the table by default, to avoid 
-accidents with the data. 
-Furthermore, directly applying the rules is not optimal. It is better to specifiy the
-rules separately and document the rules.
+accidents with the data.
+
+A better approach is to store the rules separately and apply them to a datatable.
+This makes it easier to maintain a set of rules. 
+With `dcmodify` one can specify rules with the function `modifier`:
 
 ```{r}
 # separate rule set
@@ -110,40 +113,71 @@ m <- modifier( if (age < 16) income = 0
                                , "F" = "F"
                                , "V" = "F" # common mistake
                                , "M" = "M"
-                               , NA
+                               , "NB"
                                )
              )
+```
 
+`m` is now a set of rules that can be applied to a `data.frame` or `tbl`.
+
+```{r}
+print(m)
+```
+
+Note that the rules are executed in sequentially, in the order that they are given.
+For example the order of rule M3 and M4 matters: Rule M3 will change record 1 to a
+smoker, while rule M4 would set the number of cigarettes to 0. 
+This is intentional: correction rules often have an order in which they have to be
+applied.
+
+Rule M5 shows an example of deriving a new variable (`ageclass`) from existing 
+variables (`age`).
+
+Rule M6 shows an example of recoding, changing labels of categories to the allowed
+set of labels.
+
+```{r}
 # modify a copy of the table
 modify(person_tbl, m, copy = TRUE)
 ```
 
-It is even better to document the rules using yaml: 
+A nice properties of `modifier` rules, is that they can store extra metadata.
+They have a `name`, `label` and `description` that can be used to describe the
+intention and the why of a rule. An easy way of describing these properties is by
+exporting the ruleset to yaml and specify the rules using the yaml file.
 
 ```{r, eval=FALSE}
 export_yaml(m, "corrections.yml")
 ```
 
+In the export yml file we can label and describe the rules, but also add new 
+rules. Note that label and description are optional, but very much encouraged.
+
+_corrections.yml_
 ```yaml
 ```{r, result="asis", child="corrections.yml"}
 ```
 ```
 
-We can load these rules with 
+We can load these rules with:
 
 ```{r}
 m <- modifier(.file = "corrections.yml")
 modify(person_tbl, m, copy = TRUE)
 ```
 
+`modify` translates the modification rules into SQL code and executes the sql 
+queries on the database. For documentation or implementation purpose it can
+be useful to see the generated sql code, with the documented rules. 
 
 ```{r dump, eval=FALSE}
-dump_sql(m, person_tbl)
+dump_sql(m, person_tbl, file = "corrections.sql")
 ```
 
+_corrections.sql_:
 ```SQL
-
-```{r dump, eval=TRUE, echo=FALSE, results='asis'}
+```{r, eval=TRUE, echo=FALSE, results='asis'}
+dump_sql(m, person_tbl)
 ```
 
 ```
