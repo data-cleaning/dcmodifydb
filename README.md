@@ -17,9 +17,9 @@ The goal of dcmodifydb is to apply modification rules specified with
 `dcmodify` on a database table, allowing for documented, reproducable
 data cleaning adjustments in a database.
 
-`dcmodifydb` separates **intent** from **execution**: a user specifies
-*what*, *why* and *how* of an automatic data change and uses dcmodify to
-execute them on a `tbl` database table.
+`dcmodify` separates **intent** from **execution**: a user specifies
+*what*, *why* and *how* of an automatic data change and uses
+`dcmodifydb` to execute them on a `tbl` database table.
 
 ## Installation
 
@@ -205,7 +205,7 @@ modify.sql:
 -- dplyr version: 1.0.7
 -- dbplyr version: 2.1.1
 -- from: 'example/example.yml'
--- date: 2022-03-07
+-- date: 2022-03-08
 -- -------------------------------------
 
 

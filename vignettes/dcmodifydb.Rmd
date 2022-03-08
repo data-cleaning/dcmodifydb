@@ -137,8 +137,15 @@ modify(person_tbl, m, copy = TRUE)
 ```
 
 
-```{r}
+```{r dump, eval=FALSE}
 dump_sql(m, person_tbl)
+```
+
+```SQL
+
+```{r dump, eval=TRUE, echo=FALSE, results='asis'}
+```
+
 ```
 
 
