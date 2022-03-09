@@ -161,14 +161,19 @@ rules. Note that label and description are optional, but very much encouraged.
 
 _corrections.yml_
 ```yaml
-```{r, result="asis", child="corrections.yml"}
+```{r, result="asis", child="../inst/db/corrections.yml"}
 ```
 ```
 
 We can load these rules with:
 
-```{r}
+```{r, eval = FALSE}
 m <- modifier(.file = "corrections.yml")
+modify(person_tbl, m, copy = TRUE)
+```
+
+```{r, echo = FALSE}
+m <- modifier(.file = system.file("db/corrections.yml", package="dcmodifydb"))
 modify(person_tbl, m, copy = TRUE)
 ```
 
