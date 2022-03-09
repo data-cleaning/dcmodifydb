@@ -52,7 +52,7 @@ alter_stmt <- function(x, table, table_ident, con){
 
   lapply(names(new_vars), function(n){
     build_sql(
-      "ALTER TABLE ", sql(table_ident),
+      "ALTER TABLE ", table_ident,
       "\nADD COLUMN ", ident(n), " ", unname(sql(new_vars[n])), ";"
       , con = con
       )
@@ -86,7 +86,7 @@ update_stmt <- function(x, table, table_ident, con, ..., na.condition=FALSE){
     where <- build_sql("WHERE ", where, con = con)
     where <- sql(where)
   }
-  build_sql("UPDATE ", sql(table_ident)
+  build_sql("UPDATE ", table_ident
            ,  "\n", "SET ", ident(varname)
            ,         " = ", value
            ,  "\n", where
@@ -192,7 +192,7 @@ get_table_con <- function(table, con = NULL, copy = NULL){
     }
     con <- dbplyr::remote_con(table)
   } else {
-    table_ident <- if (is.ident(table)) table else ident(table)
+    table_ident <- if (is.ident(table)) table else as.sql(table, con=con)
     table <- dplyr::tbl(con, table_ident)
   }
   list(table = table, con = con, table_ident = table_ident)
