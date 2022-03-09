@@ -39,7 +39,6 @@ modify.tbl_sql <- function( dat, x, ..., copy = NULL
                           , ignore_nw = FALSE
                           ){
 
-
   tc <- get_table_con(dat, copy = copy)
 
   con <- tc$con
@@ -60,7 +59,7 @@ modify.tbl_sql <- function( dat, x, ..., copy = NULL
 
   # somehow it does not work to give table = table...
   sql_updates <- modifier_to_sql( x
-                                , table = as.character(tc$table_ident)
+                                , table = tc$table_ident
                                 , con = con
                                 )
 

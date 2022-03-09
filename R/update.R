@@ -192,7 +192,7 @@ get_table_con <- function(table, con = NULL, copy = NULL){
     }
     con <- dbplyr::remote_con(table)
   } else {
-    table_ident <- sql(table)
+    table_ident <- if (is.ident(table)) table else ident(table)
     table <- dplyr::tbl(con, table_ident)
   }
   list(table = table, con = con, table_ident = table_ident)

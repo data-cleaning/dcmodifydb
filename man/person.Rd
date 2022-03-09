@@ -12,7 +12,7 @@ A data frame with x rows and variables:
 \item{gender}{gender of a person}
 \item{year}{year of measurement}
 \item{smokes}{if a person smokes or not}
-\item{cigarrettes}{how many cigarretes a person smokes}
+\item{cigarettes}{how many cigarretes a person smokes}
 ...
 }
 The dataset is also available as a sqlite database at
