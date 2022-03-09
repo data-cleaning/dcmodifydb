@@ -58,7 +58,7 @@ library(dcmodifydb)
 `dcmodifydb` works on a database table, so we need a connection to a table within
 a database. 
 
-We set up a database table with sqlite using the person data set, but for your 
+We set up a database table with sqlite using the `person` data set, but for your 
 use case you should connect to your database.
 
 ```{r, echo=FALSE}
@@ -72,18 +72,18 @@ dplyr::copy_to(con, person)
 ```
 
 
-We know retrieve a handle to the person table using `dplyr`
+We now retrieve a handle to the person table using `dplyr`
 
 ```{r}
 person_tbl <- dplyr::tbl(con, "person")
 person_tbl
 ```
 
-The person dataset clearly contains some errors that should be corrected. 
+The person dataset clearly contains some errors that can be corrected. 
 We specify the corrections using modifier rules and apply them directly with 
 the function`modify_so`.
 
-First we correct that minors should not have an income and that year should be a
+First we correct that children can not have an income and that year must be a
 long year.
 
 ```{r}
@@ -98,16 +98,18 @@ modify_so( person_tbl
 Note that the corrections are made on a copy of the table by default, to avoid 
 accidents with the data.
 
-A better approach is to store the rules separately and apply them to a datatable.
-This makes it easier to maintain a set of rules. 
+A better approach than directly applying corrections is to store the rules 
+in a `modifier` object and apply them in a separate step to a data base table.
+
+This makes it easier to maintain, use and document a set of rules.
 With `dcmodify` one can specify rules with the function `modifier`:
 
 ```{r}
 # separate rule set
 m <- modifier( if (age < 16) income = 0
              , if (year < 25) year = year + 2000
-             , if (cigarrettes > 0 ) smokes = "yes"
-             , if (smokes == "no") cigarrettes = 0
+             , if (cigarettes > 0 ) smokes = "yes"
+             , if (smokes == "no") cigarettes = 0
              , ageclass <- if (age < 18) "child" else "adult"
              , gender <- switch( toupper(gender)
                                , "F" = "F"
@@ -124,22 +126,26 @@ m <- modifier( if (age < 16) income = 0
 print(m)
 ```
 
-Note that the rules are executed in sequentially, in the order that they are given.
-For example the order of rule M3 and M4 matters: Rule M3 will change record 1 to a
-smoker, while rule M4 would set the number of cigarettes to 0. 
-This is intentional: correction rules often have an order in which they have to be
-applied.
+- M3 corrects `smokes` is "no" for persons who smoke cigarettes.
 
-Rule M5 shows an example of deriving a new variable (`ageclass`) from existing 
+- M4 sets an unknown `cigarettes` to zero for non-smokers. 
+
+- M5 shows an example of deriving a new variable (`ageclass`) from existing 
 variables (`age`).
 
-Rule M6 shows an example of recoding, changing labels of categories to the allowed
+- M6 shows an example of recoding, changing labels of categories to the allowed
 set of labels.
 
 ```{r}
 # modify a copy of the table
 modify(person_tbl, m, copy = TRUE)
 ```
+
+Note that the rules are executed sequentially, in the order that they are gven.
+For example the order of rule M3 and M4 matters: Rule M3 will change record 1 to a
+smoker, while rule M4 would set the number of cigarettes to 0. 
+This is intentional: correction rules often have an order in which they have to be
+applied.
 
 A nice properties of `modifier` rules, is that they can store extra metadata.
 They have a `name`, `label` and `description` that can be used to describe the
