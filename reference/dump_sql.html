@@ -96,6 +96,99 @@ works on a (temporary) copy of the table.</p>
 <code><a href="modifier_to_sql.html">modifier_to_sql</a>()</code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># load modification rules and apply:</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/data-cleaning/dcmodify" class="external-link">dcmodify</a></span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, dbname<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"db/person.db"</span>, package<span class="op">=</span><span class="st">"dcmodifydb"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">person</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span>.file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"db/corrections.yml"</span>, package<span class="op">=</span><span class="st">"dcmodifydb"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Object of class modifier with 6 elements:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M1: nochildlabor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   if (age &lt; 16) income = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M2: longyear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   if (year &lt; 25) year = year + 2000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M3: smoker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   if (cigarettes &gt; 0) smokes = "yes"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M4: nosmoke</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   if (smokes == "no") cigarettes = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M5: ageclass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ageclass &lt;- if (age &lt; 18) "child" else "adult"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> M6: gender</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gender &lt;- switch(toupper(gender), F = "F", V = "F", M = "M", "NB")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># show sql code generated from the rules.</span></span>
+<span class="r-in"><span class="fu">dump_sql</span><span class="op">(</span><span class="va">rules</span>, <span class="va">person</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- -------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Generated with dcmodifydb, do not edit</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- dcmodify version: 0.1.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- dcmodifydb version: 0.3.0.9001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- dplyr version: 1.0.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- dbplyr version: 2.1.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- from: '/Users/runner/work/_temp/Library/dcmodifydb/db/corrections.yml'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- date: 2022-03-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- -------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ALTER TABLE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ADD COLUMN `ageclass` TEXT;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- M1: nochildlabor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Children are not allowed to work, so can not have income.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- R expression: if (age &lt; 16) income = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `income` = 0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> WHERE `age` &lt; 16.0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- M2: longyear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Convert 2 digits year into 4 digits.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- R expression: if (year &lt; 25) year = year + 2000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `year` = `year` + 2000.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> WHERE `year` &lt; 25.0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- M3: smoker</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- If you smoke cigarettes you are a smoker...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- R expression: if (cigarettes &gt; 0) smokes = "yes"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `smokes` = 'yes'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> WHERE `cigarettes` &gt; 0.0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- M4: nosmoke</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- If you dont smoke, the (unknown) number of cigarettes is zero</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- R expression: if (smokes == "no") cigarettes = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `cigarettes` = 0.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> WHERE `smokes` = 'no';</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- M5: ageclass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Derive ageclass using the age variable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- R expression: ageclass &lt;- if (age &lt; 18) "child" else "adult"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `ageclass` = 'child'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> WHERE `age` &lt; 18.0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `ageclass` = 'adult'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> WHERE NOT(`age` &lt; 18.0);</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- M6: gender</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- Map the labels for gender to M/F/NB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -- R expression: gender &lt;- switch(toupper(gender), F = "F", V = "F", M = "M", "NB")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> UPDATE `person`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SET `gender` = CASE UPPER(`gender`) WHEN ('F') THEN ('F') WHEN ('V') THEN ('F') WHEN ('M') THEN ('M') ELSE ('NB') END</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ;</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
