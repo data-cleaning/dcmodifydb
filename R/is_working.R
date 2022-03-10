@@ -1,7 +1,10 @@
-#' Check if UPDATE statement is functional
+#' Rule check on the database
 #'
 #' Get an indication of which R statement can be executed on the SQL
 #' database.
+#' dcmodifydb translates R statements into SQL statement. This works for
+#' many scenario's but not all R statements can be translated into SQL.
+#' This function checks whether a modification rule can be executed on the database.
 #' @export
 #' @example ./example/is_working_db.R
 #' @param m [modifier()] object

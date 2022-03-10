@@ -1,10 +1,13 @@
-#' Modify records in a tbl
+#' Apply corrections/derivations to a db table
 #'
-#' Modify records in a database table using modification rules specified
-#' in a modifier object.
+#' Change records in a database table using modification rules specified
+#' in a [modifier()] object. This is the main function of package `dcmodifydb`.
+#' For more information see the vignettes.
 #'
 #' The modification rules are translated into SQL update statements
 #' and executed on the table.
+#'
+#'
 #' Note that
 #'
 #' - by default the updates are executed on a copy of the table.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/modify.R
 \name{modify,ANY,modifier-method}
 \alias{modify,ANY,modifier-method}
-\title{Modify records in a tbl}
+\title{Apply corrections/derivations to a db table}
 \usage{
 \S4method{modify}{ANY,modifier}(
   dat,
@@ -30,12 +30,14 @@
 \code{\link[=tbl_sql]{tbl_sql()}} object, referencing the modified table object.
 }
 \description{
-Modify records in a database table using modification rules specified
-in a modifier object.
+Change records in a database table using modification rules specified
+in a \code{\link[=modifier]{modifier()}} object. This is the main function of package \code{dcmodifydb}.
+For more information see the vignettes.
 }
 \details{
 The modification rules are translated into SQL update statements
 and executed on the table.
+
 Note that
 \itemize{
 \item by default the updates are executed on a copy of the table.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/is_working.R
 \name{is_working_db}
 \alias{is_working_db}
-\title{Check if UPDATE statement is functional}
+\title{Rule check on the database}
 \usage{
 is_working_db(m, tab, n = 2, warn = TRUE, sql_warn = FALSE)
 }
@@ -23,6 +23,9 @@ is_working_db(m, tab, n = 2, warn = TRUE, sql_warn = FALSE)
 \description{
 Get an indication of which R statement can be executed on the SQL
 database.
+dcmodifydb translates R statements into SQL statement. This works for
+many scenario's but not all R statements can be translated into SQL.
+This function checks whether a modification rule can be executed on the database.
 }
 \examples{
 person <- dbplyr::memdb_frame(age = 12, salary = 3000)

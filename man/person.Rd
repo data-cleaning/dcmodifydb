@@ -3,7 +3,7 @@
 \docType{data}
 \name{person}
 \alias{person}
-\title{Person data with income and smoking habits}
+\title{Person data, income and smoking habits}
 \format{
 A data frame with x rows and variables:
 \describe{
@@ -22,6 +22,20 @@ The dataset is also available as a sqlite database at
 person
 }
 \description{
-A synthetic data set with records to be corrected.
+A synthetic data set with person data with records to be corrected.
+The datasethas missing values
+}
+\examples{
+
+# load modification rules and apply:
+library(dcmodify)
+rules <- modifier(.file = system.file("db/corrections.yml", package="dcmodifydb"))
+
+con <- DBI::dbConnect(RSQLite::SQLite(), dbname=system.file("db/person.db", package="dcmodifydb"))
+person <- dplyr::tbl(con, "person")
+print(person)
+
+person2 <- modify(person, rules, copy=TRUE)
+print(person2)
 }
 \keyword{datasets}
