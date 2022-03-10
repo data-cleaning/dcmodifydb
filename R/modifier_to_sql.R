@@ -1,8 +1,8 @@
 #' Utility function to extract SQL statements
 #'
 #' Extract UPDATE statements from modifier object as a list of SQL statements.
-#' A user should normally be using
-#' This function should normally not be called by a user
+#' A user should normally be using [modify()] or [dump_sql()], but this
+#' function may be useful.
 #' @importFrom dplyr tbl_vars
 #' @export
 #' @param x `dcmodify::modifier()` object

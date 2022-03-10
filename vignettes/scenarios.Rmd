@@ -3,7 +3,7 @@ title: "Correction scenarios"
 subtitle: "Common errors and their corrections"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{scenarios}
+  %\VignetteIndexEntry{Correction scenarios}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

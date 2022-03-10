@@ -14,6 +14,7 @@
 #' @param ... not used
 #' @return `character` sql script with all statements.
 #' @importFrom validate description label origin
+#' @example ./example/dump_sql.R
 #' @family sql translation
 dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
   tc <- get_table_con(table, con, copy=FALSE)

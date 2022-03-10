@@ -3,7 +3,7 @@ title: "Modification syntax"
 subtitle: "Supported rule syntax"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{syntax}
+  %\VignetteIndexEntry{Modification syntax}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
