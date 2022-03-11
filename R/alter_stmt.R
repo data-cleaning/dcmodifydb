@@ -28,11 +28,15 @@ alter_stmt <- function(x, table, table_ident, con){
   # DBI::dbClearResult(rs)
 
   new_vars <- types[!names(types) %in% org_vars]
+  add_column <- FALSE
+
+  add_ <- if (add_column) sql("\nADD COLUMN ") else sql("\nADD ")
 
   lapply(names(new_vars), function(n){
     build_sql(
-      "ALTER TABLE ", table_ident,
-      "\nADD COLUMN ", ident(n), " ", unname(sql(new_vars[n])), ";"
+      "ALTER TABLE ", table_ident
+      , add_
+      , ident(n), " ", unname(sql(new_vars[n])), ";"
       , con = con
     )
   })
