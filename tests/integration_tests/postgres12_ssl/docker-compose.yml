@@ -1,0 +1,43 @@
+version: '3.7'
+
+
+volumes:
+  pgdata:
+
+
+
+
+services:
+    db_postgres12_ssl:
+      container_name: "db_postgres12_ssl"
+      image: postgres:12
+      volumes:
+        - type: "bind"
+          source: "tests/integration_tests/postgres_ssl/database"
+          target: /pgdata
+      environment:
+        POSTGRES_DB: "test_postgres12_ssl"
+        POSTGRES_USER: "admin"
+        POSTGRES_PASSWORD: "admin"
+      ports:
+        - "5432:5432"
+
+    test_postgres12_ssl:
+      tty: true
+      container_name: test_postgres12_ssl
+      command: bash run_tests.sh
+      build: 
+        context: ../../../
+        dockerfile: tests/integration_tests/postgres12_ssl/dcmodifyDB/Dockerfile
+      environment:
+        POSTGRES_DB: "test_postgres12_ssl"
+        POSTGRES_USER: "admin"
+        POSTGRES_PASSWORD: "admin"
+        POSTGRES_HOST: "postgres12_ssl"    
+      depends_on:
+        - "db_postgres12_ssl"
+
+
+
+
+networks: {mynetwork: {}}

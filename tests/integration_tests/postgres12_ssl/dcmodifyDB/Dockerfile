@@ -1,11 +1,18 @@
 # Pull specific digest of R for now
-FROM ubuntu:latest
+
 FROM r-base:latest
 
+# create and copy code to start running the tests
 RUN mkdir /code
+COPY tests/integration_tests/postgres12_ssl/dcmodifyDB/* /code/.
+# create and copy directory for package code
+RUN mkdir /code/R_code
+COPY R /code/R_code
+
+RUN mkdir /code/tests
 
 
-COPY . /code/.
+
 WORKDIR /code
 
 RUN apt-get update

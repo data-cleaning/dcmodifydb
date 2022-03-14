@@ -1,0 +1,16 @@
+rules:
+- expr: if (age > 130) age <- 130L
+  name: M1
+  label: 'maximum age'
+  description: |
+    Age is limited.
+- expr: if (age < 12) {income <- 0L; child <- TRUE;}
+  name: M2
+  label: 'Child labor'
+  description: |
+    A child should not work.
+- expr: if (income > 0) {workstatus <- "job"}
+  name: M3
+  label: 'has job'
+  description: |
+    Income means job.

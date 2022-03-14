@@ -2,3 +2,4 @@
 docs
 .Rhistory
 inst/doc
+*.txt

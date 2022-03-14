@@ -1,8 +1,10 @@
 
+
+
+library(devtools)
 library(DBI)
 library(dcmodify)
-
-library(dcmodifydb)
+devtools::load_all(path= "/code/package")
 library(odbc)
 
 
@@ -13,15 +15,15 @@ m <- modifier( if (cyl == 6)  gear <- 10
              )
 
 # setting up a table in the database
-con <- dbConnect(RPostgres::Postgres(),
-                 host = "db",
-                 dbname = "r_testing",
+con <- dbConnect(odbc::odbc(),
+                driver="Postgres Unicode",
+                database = "test_postgres12_odbc",
+                 server = "db_postgres12_odbc",
                  port = 5432,
-                 user   = "admin",
-                 password    = "admin",)
-                 dbRemoveTable(con, "mtcars")
-# Table might already exist in db so delete it and fail silently
+                 UID   = "admin",
+                 PWD    = "admin",)
 
+# Table might already exist in db so delete it and fail silently
 dbWriteTable(con, "mtcars", mtcars[,c("cyl", "gear")], overwrite = TRUE)
 tbl_mtcars <- dplyr::tbl(con, "mtcars")
 
