@@ -14,24 +14,24 @@ services:
       command: postgres -c listen_addresses='*'
       volumes:
         - type: "bind"
-          source: "tests/integration_tests/postgres_odbc/database"
+          source: "tests/integration_tests/windows/postgres12_odbc/database"
           target: /pgdata
       environment:
-        POSTGRES_DB: "test_postgres12_odbc"
+        POSTGRES_DB: "windows_postgres12_odbc"
         POSTGRES_USER: "admin"
         POSTGRES_PASSWORD: "admin"
       ports:
         - "5432:5432"
 
-    test_postgres12_odbc:
+    windows_postgres12_odbc:
       tty: true
-      container_name: test_postgres12_odbc
+      container_name: windows_postgres12_odbc
       command: bash run_tests.sh
       build: 
         context: ../../../../
         dockerfile: tests/integration_tests/windows/postgres12_odbc/dcmodifyDB/Dockerfile
       environment:
-        POSTGRES_DB: "test_postgres12_odbc"
+        POSTGRES_DB: "windows_postgres12_odbc"
         POSTGRES_USER: "admin"
         POSTGRES_PASSWORD: "admin"
         POSTGRES_HOST: "postgres12_odbc"     

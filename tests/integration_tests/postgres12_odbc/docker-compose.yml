@@ -14,7 +14,7 @@ services:
       command: postgres -c listen_addresses='*'
       volumes:
         - type: "bind"
-          source: "tests/integration_tests/postgres_odbc/database"
+          source: "tests/integration_tests/postgres12_odbc/database"
           target: /pgdata
       environment:
         POSTGRES_DB: "test_postgres12_odbc"

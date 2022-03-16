@@ -16,10 +16,15 @@ tbl_mtcars <- dplyr::tbl(con, "mtcars")
 # "Houston, we have a table"
 head(tbl_mtcars)
 
-# lets modify on a copy of the table...
+# lets modify on a temporary copy of the table..
+# this copy is only visible to the current connection
 tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
+
 
 # and gear has changed...
 head(tbl_m)
+
+# If one certain about the changes, then you can overwrite the table with the changes
+tbl_m <- modify(tbl_mtcars, m, copy=FALSE)
 
 dbDisconnect(con)
