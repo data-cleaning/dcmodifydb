@@ -1,4 +1,4 @@
-#' Shows generated sql
+#' Show generated sql
 #'
 #' Writes the generated sql to a file or command line. The script contains ALTER and
 #' UPDATE statements and can be used for documentation purposes.
@@ -6,6 +6,9 @@
 #' Note that when this script is run on the database it will change the
 #' original table. This differs from the default behavior of dcmodify which
 #' works on a (temporary) copy of the table.
+#'
+#' Furthermore, it seems wise to wrap the generated SQL in a transaction when
+#' apply the SQL code on a database.
 #' @export
 #' @param x `dcmodify::modifier()` object with rules to be written
 #' @param table either a [dplyr::tbl()] object or a `character` with table name

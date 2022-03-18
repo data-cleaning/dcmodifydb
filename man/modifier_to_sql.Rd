@@ -18,8 +18,8 @@ modifier_to_sql(x, table, con = NULL)
 }
 \description{
 Extract UPDATE statements from modifier object as a list of SQL statements.
-A user should normally be using
-This function should normally not be called by a user
+A user should normally be using \code{\link[=modify]{modify()}} or \code{\link[=dump_sql]{dump_sql()}}, but this
+function may be useful.
 }
 \seealso{
 Other sql translation: 

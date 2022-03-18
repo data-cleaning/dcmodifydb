@@ -2,7 +2,7 @@
 % Please edit documentation in R/dump_sql.R
 \name{dump_sql}
 \alias{dump_sql}
-\title{Shows generated sql}
+\title{Show generated sql}
 \usage{
 dump_sql(x, table, con = NULL, file = stdout(), ...)
 }
@@ -28,6 +28,9 @@ UPDATE statements and can be used for documentation purposes.
 Note that when this script is run on the database it will change the
 original table. This differs from the default behavior of dcmodify which
 works on a (temporary) copy of the table.
+
+Furthermore, it seems wise to wrap the generated SQL in a transaction when
+apply the SQL code on a database.
 }
 \examples{
 # load modification rules and apply:

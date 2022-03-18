@@ -99,5 +99,5 @@ modify.tbl_sql <- function( dat, x, ..., copy = NULL
   }
 
   # TODO do something with row_affected (attribute)
-  table
+  dplyr::tbl(tc$con, tc$table_ident)
 }
