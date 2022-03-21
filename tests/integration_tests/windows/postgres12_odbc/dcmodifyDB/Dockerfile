@@ -2,6 +2,8 @@
 
 FROM mcr.microsoft.com/windows:20H2
 
+ENV R_VERSION=4.1.2
+
 
 RUN curl.exe -o R-%R_VERSION%-win.exe https://cran.r-project.org/bin/windows/base/old/%R_VERSION%/R-%R_VERSION%-win.exe
 

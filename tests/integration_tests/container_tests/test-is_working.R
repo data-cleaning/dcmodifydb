@@ -4,7 +4,10 @@ library(dcmodify)
 describe("is working",{
   it("is working",{
 
-    tab <- tbl_memdb(data.frame(x = 1:2), "w")
+    con <- create_db_connection()
+
+    dbWriteTable(conn = con, name = "is_working", value = data.frame(x = 1:2))
+    tab <- dplyr::tbl(con, "is_working")
     m <- modifier(if (x > 1) x <- 1)
 
     # updates <- modifier_to_sql(m, tab)
@@ -15,7 +18,12 @@ describe("is working",{
 
   it("is working check",{
 
-    tab <- memdb_frame(x = 1:2)
+
+
+    con <- create_db_connection()
+    print(con)
+    dbWriteTable(con, "is_working_check", data.frame(x = 1:2))
+    tab <- dplyr::tbl(con, "is_working_check")
     df <- as.data.frame(tab)
 
     m <- modifier( if (x > 1) x <- 1

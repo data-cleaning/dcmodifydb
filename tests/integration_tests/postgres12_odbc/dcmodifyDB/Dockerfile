@@ -12,8 +12,11 @@ COPY R /code/package/R
 COPY DESCRIPTION /code/package/.
 COPY NAMESPACE /code/package/.
 
-
 RUN mkdir /code/tests
+COPY tests/integration_tests/container_tests/* /code/tests/.
+
+
+
 
 
 

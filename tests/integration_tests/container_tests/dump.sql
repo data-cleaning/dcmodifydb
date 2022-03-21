@@ -1,10 +1,10 @@
 
 
 ALTER TABLE `ds`
-ADD COLUMN `child` character;
+ADD `child` TEXT;
 
 ALTER TABLE `ds`
-ADD COLUMN `workstatus` character;
+ADD `workstatus` TEXT;
 
 -- M1: maximum age
 -- Age is limited.

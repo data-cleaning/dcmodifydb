@@ -8,20 +8,20 @@ volumes:
 
 
 services:
-    db_postgres12_odbc:
-      container_name: "db_postgres12_odbc"
+    db_windows_postgres12_odbc:
+      container_name: "db_windows_postgres12_odbc"
       image: postgres:12
       command: postgres -c listen_addresses='*'
       volumes:
         - type: "bind"
-          source: "tests/integration_tests/windows/postgres12_odbc/database"
+          source: "database"
           target: /pgdata
       environment:
-        POSTGRES_DB: "windows_postgres12_odbc"
+        POSTGRES_DB: "db_windows_postgres12_odbc"
         POSTGRES_USER: "admin"
         POSTGRES_PASSWORD: "admin"
       ports:
-        - "5432:5432"
+        - "5433:5433"
 
     windows_postgres12_odbc:
       tty: true
@@ -36,7 +36,7 @@ services:
         POSTGRES_PASSWORD: "admin"
         POSTGRES_HOST: "postgres12_odbc"     
       depends_on:
-        - "db_postgres12_odbc"
+        - "db_windows_postgres12_odbc"
 
 
 
