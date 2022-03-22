@@ -11,8 +11,8 @@ create_db_connection <- function(env = parent.frame()){
 
         withr::defer({
             vec_ <- DBI::dbListTables(con)
-            lapply(vec_, dbRemoveTable, conn = con)
-            dbDisconnect(con)
+            lapply(vec_, DBI::dbRemoveTable, conn = con)
+            DBI::dbDisconnect(con)
         },
         envir = env
         )

@@ -21,7 +21,7 @@ describe("is working",{
 
 
     con <- create_db_connection()
-    print(con)
+
     dbWriteTable(con, "is_working_check", data.frame(x = 1:2))
     tab <- dplyr::tbl(con, "is_working_check")
     df <- as.data.frame(tab)
