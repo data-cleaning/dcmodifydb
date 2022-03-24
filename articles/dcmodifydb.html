@@ -151,7 +151,7 @@
 <code class="sourceCode R"><span class="va">person_tbl</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"person"</span><span class="op">)</span>
 <span class="va">person_tbl</span>
 <span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;person&gt; [?? x 6]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.0 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>000    12 M       <span style="text-decoration: underline;">2</span>020 no             10</span>
@@ -167,8 +167,8 @@
          , <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">25</span><span class="op">)</span> <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">2000</span>
          <span class="op">)</span>
 <span class="co">#&gt; Warning: `copy` not specified, setting `copy=TRUE`, working on copy of table.</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_1656402&gt; [?? x 6]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_2835053&gt; [?? x 6]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.0 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 no             10</span>
@@ -221,8 +221,8 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># modify a copy of the table</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_775650&gt; [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_9123021&gt; [?? x 7]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.0 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes ageclass</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 yes            10 child   </span>
@@ -270,8 +270,8 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span>.file <span class="op">=</span> <span class="st">"corrections.yml"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_598222&gt; [?? x 7]</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.37.2 [:memory:]</span></span>
+<pre><code><span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_6243362&gt; [?? x 7]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.0 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes ageclass</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0    12 M       <span style="text-decoration: underline;">2</span>020 yes            10 child   </span>
@@ -288,7 +288,7 @@
 <span id="cb14-5"><a href="#cb14-5"></a><span class="co">-- dplyr version: 1.0.8</span></span>
 <span id="cb14-6"><a href="#cb14-6"></a><span class="co">-- dbplyr version: 2.1.1</span></span>
 <span id="cb14-7"><a href="#cb14-7"></a><span class="co">-- from: '/Users/runner/work/_temp/Library/dcmodifydb/db/corrections.yml'</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a><span class="co">-- date: 2022-03-22</span></span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="co">-- date: 2022-03-24</span></span>
 <span id="cb14-9"><a href="#cb14-9"></a><span class="co">-- -------------------------------------</span></span>
 <span id="cb14-10"><a href="#cb14-10"></a></span>
 <span id="cb14-11"><a href="#cb14-11"></a></span>
