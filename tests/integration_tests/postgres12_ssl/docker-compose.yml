@@ -13,7 +13,7 @@ services:
       image: postgres:12
       volumes:
         - type: "bind"
-          source: "tests/integration_tests/postgres_ssl/database"
+          source: "tests/integration_tests/postgres12_ssl/database"
           target: /pgdata
       environment:
         POSTGRES_DB: "test_postgres12_ssl"
@@ -30,10 +30,12 @@ services:
         context: ../../../
         dockerfile: tests/integration_tests/postgres12_ssl/dcmodifyDB/Dockerfile
       environment:
-        POSTGRES_DB: "test_postgres12_ssl"
-        POSTGRES_USER: "admin"
-        POSTGRES_PASSWORD: "admin"
-        POSTGRES_HOST: "postgres12_ssl"    
+        CONNECTION_TYPE: "ssl" 
+        DB_HOST: "db_postgres12_ssl"
+        DB_NAME: "test_postgres12_ssl"
+        USER: "admin"
+        PASSWORD: "admin"  
+        PORT: "5432"       
       depends_on:
         - "db_postgres12_ssl"
 

@@ -31,10 +31,13 @@ services:
         context: ../../../
         dockerfile: tests/integration_tests/postgres12_odbc/dcmodifyDB/Dockerfile
       environment:
-        POSTGRES_DB: "test_postgres12_odbc"
-        POSTGRES_USER: "admin"
-        POSTGRES_PASSWORD: "admin"
-        POSTGRES_HOST: "postgres12_odbc"     
+        CONNECTION_TYPE: "odbc"
+        DB_HOST: "db_postgres12_odbc"
+        DB_NAME: "test_postgres12_odbc"
+        USER: "admin"
+        PASSWORD: "admin" 
+        PORT: "5432"
+        DRIVER: "PostgreSQL Unicode"
       depends_on:
         - "db_postgres12_odbc"
 

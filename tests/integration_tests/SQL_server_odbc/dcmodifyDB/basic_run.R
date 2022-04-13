@@ -8,6 +8,7 @@ devtools::load_all(path= "/code/package")
 library(odbc)
 library(testthat)
 
+#sort(unique(odbcListDrivers()[[1]]))
 test_dir("//code/tests/")
 
 

@@ -7,7 +7,7 @@ sleep 10
 echo "Hello World!"
 echo "I have got the power"
 
-Rscript --no-save basic_run.R
+Rscript --no-save run_tests.R
 
 sleep 300000
 
