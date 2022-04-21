@@ -118,4 +118,42 @@ describe("modify",{
     expect_equal(as.data.frame(d_m), data.frame(id = letters[1:3], turnover=c(2000,1000,3000)))
   })
 
+  it("errors with no key", {
+    d <- memdb_frame(id=letters[1:2], x = 1:2)
+    m <- modifier(if (x > 1) x <- 1)
+
+    expect_error({
+      d_m <- modify(d, m, copy = FALSE)
+    })
+  })
+
+  it("errors with wrong key", {
+    d <- memdb_frame(id=letters[1:2], id2=LETTERS[1:2], x = 1:2)
+    m <- modifier(if (x > 1) x <- 1)
+
+    expect_error({
+      d_m <- modify(d, m, copy = FALSE, key="no_id")
+    })
+
+    expect_error({
+      d_m <- modify(d, m, copy = FALSE, key=c("id2", "no_id"))
+    })
+
+  })
+
+  it("handles multiple keys", {
+    d <- memdb_frame(id=letters[1:2], id2=LETTERS[1:2], x = 1:2)
+    df <- as.data.frame(d)
+
+    m <- modifier(if (x > 1) x <- 1)
+
+    d_m <- modify(d, m, copy = FALSE, key=c("id", "id2"))
+    df_m <- modify(df, m)
+
+    expect_equal(as.data.frame(d_m), df_m)
+
+  })
+
+
+
 })
