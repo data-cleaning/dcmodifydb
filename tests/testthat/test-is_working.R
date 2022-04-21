@@ -4,18 +4,18 @@ library(dcmodify)
 describe("is working",{
   it("is working",{
 
-    tab <- tbl_memdb(data.frame(x = 1:2), "w")
+    tab <- tbl_memdb(data.frame(id=letters[1:2], x = 1:2), "w")
     m <- modifier(if (x > 1) x <- 1)
 
     # updates <- modifier_to_sql(m, tab)
-    working <- is_working_db(m, tab)
+    working <- is_working_db(m, tab, key = "id")
 
     expect_equal(working, TRUE)
   })
 
   it("is working check",{
 
-    tab <- memdb_frame(x = 1:2)
+    tab <- memdb_frame(id=letters[1:2], x = 1:2)
     df <- as.data.frame(tab)
 
     m <- modifier( if (x > 1) x <- 1
@@ -25,7 +25,7 @@ describe("is working",{
                  )
 
     expect_warning({
-      working <- is_working_db(m, tab)
+      working <- is_working_db(m, tab, key = "id")
     })
 
     expect_equal(working, c(TRUE, TRUE, FALSE, TRUE))

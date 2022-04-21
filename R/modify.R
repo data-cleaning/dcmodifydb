@@ -21,6 +21,7 @@
 #' @importFrom dcmodify modify
 #' @param dat [tbl_sql()] object, table in a SQL database
 #' @param x `dcmodify::modifier()` object.
+#' @param key `character` names of the key columns
 #' @param copy if `TRUE` (default), modify copy of table
 #' @param transaction if `TRUE` use one transaction for all modifications.
 #' @param ignore_nw if `TRUE` non-working rules are ignored
@@ -29,25 +30,32 @@
 #' @return [tbl_sql()] object, referencing the modified table object.
 #' @export
 setMethod("modify", signature("ANY", "modifier")
-          , function(dat, x, copy = NULL, transaction = !isTRUE(copy), ignore_nw = FALSE, ...){
+          , function(dat, x, key = NULL, copy = NULL, transaction = !isTRUE(copy), ignore_nw = FALSE, ...){
   if (inherits(dat, "tbl_sql")){
-    return(modify.tbl_sql(dat = dat, x = x
-                          , copy = copy, transaction = transaction, ignore_nw = ignore_nw, ...))
+    return(modify.tbl_sql(dat = dat
+                         , x = x
+                         , key = key
+                         , copy = copy
+                         , transaction = transaction
+                         , ignore_nw = ignore_nw
+                         , ...
+                         )
+           )
   }
   stop(class(dat), " not supported")
 })
 
-modify.tbl_sql <- function( dat, x, ..., copy = NULL
+modify.tbl_sql <- function( dat, x, key, ..., copy = NULL
                           , transaction = !isTRUE(copy)
                           , ignore_nw = FALSE
                           ){
-
   tc <- get_table_con(dat, copy = copy)
+  check_key(tc$table, key)
 
   con <- tc$con
   table <- tc$table
 
-  working <- is_working_db(x, table)
+  working <- is_working_db(x, table, key=key)
 
   if (any(!working)){
     if (isTRUE(ignore_nw)){
@@ -64,6 +72,7 @@ modify.tbl_sql <- function( dat, x, ..., copy = NULL
   sql_updates <- modifier_to_sql( x
                                 , table = tc$table_ident
                                 , con = con
+                                , key = key
                                 )
 
 

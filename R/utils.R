@@ -18,3 +18,17 @@ random_name <- function(name = NULL){
     a
   }
 }
+
+check_key <- function(tbl, key = NULL){
+  colnms <- dplyr::tbl_vars(tbl)
+  if (is.character(key)){
+    key_in_table <- key %in% colnms
+    if (!all(key_in_table)){
+      key_nf <- paste0("'", key[!key_in_table], "'", collapse = ", ")
+      stop("key(s) ", key_nf," not recognized as a column", call. = FALSE)
+    }
+  } else {
+    stop("Use the 'key' argument to indicate the columns that identify a row.", call. = FALSE)
+  }
+  key
+}

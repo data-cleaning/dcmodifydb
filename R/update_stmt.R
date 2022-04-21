@@ -1,19 +1,27 @@
 #' @importFrom dbplyr translate_sql build_sql sql
-update_stmt <- function(x, table, table_ident, con, ..., na.condition=FALSE){
+update_stmt <- function(x, table, table_ident, con, key, ..., na.condition=FALSE){
   # assumes that all columns are available...
 
   if (!is_assignment(x) && !is.symbol(x[[2]])){
     return(NULL)
   }
 
+  keylist <- lapply(key, as.symbol)
 
   varname <- as.character(x[[2]])
-
   value <- do.call(translate_sql, list(x[[3]], con = con))
+
+  # value <- list(x[[3]])
+  # names(value) <- varname
+  # dplyr::transmute(table, !!!keylist, !!!value)
+  # browser()
+
   where <- NULL
 
   g <- guard(x)
 
+  # TODO add key to filter
+  # TODO add FROM clause with transmute
   if (!is.null(g)){
     g <- replace_vin(g)
     qry_f <- eval(bquote(dplyr::filter(table, .(g))))

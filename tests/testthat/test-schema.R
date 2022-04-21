@@ -9,14 +9,15 @@ describe("Schema's working", {
   schema <- dbConnect(SQLite(), db=tmp)
 
   DBI::dbExecute(con, sprintf("ATTACH '%s' as 'schema'", tmp))
+  iris$id <- seq_len(nrow(iris))
   dbWriteTable(schema, "iris", iris, overwrite=TRUE)
 
 
   it("works a schema table", {
     ir <- dplyr::tbl(con, in_schema("schema", "iris"))
     m <- modifier(Sepal.Length <- 1)
-    modify(ir, m, copy=FALSE)
-    modifier_to_sql(m, ir)
+    modify(ir, m, copy=FALSE, key = "id")
+    modifier_to_sql(m, ir, key = "id")
 
   })
 })

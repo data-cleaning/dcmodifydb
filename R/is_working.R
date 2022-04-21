@@ -8,12 +8,13 @@
 #' @export
 #' @example ./example/is_working_db.R
 #' @param m [modifier()] object
-#' @param tab tbl object
+#' @param tab `tbl` object
+#' @param key `character` with column names that identify a row
 #' @param n number of records to use in this check
 #' @param warn generate warnings for non-working rules
 #' @param sql_warn generate warnings with sql code for non-working rules
 #' @return `logical` with which statements are working
-is_working_db <- function(m, tab, n = 2, warn = TRUE, sql_warn = FALSE){
+is_working_db <- function(m, tab, key, n = 2, warn = TRUE, sql_warn = FALSE){
 
   if (!inherits(m, "modifier")){
     stop("Expected a modifier object ('m')", call. = FALSE)
@@ -23,12 +24,15 @@ is_working_db <- function(m, tab, n = 2, warn = TRUE, sql_warn = FALSE){
   tab <- utils::head(tab, n)
   #TODO integrate this with sql_alter
   tc <- get_table_con(tab, copy = FALSE)
+  check_key(tc$table, key)
   con <- tc$con
 
   sql_alter <- alter_stmt(m, tc$table, tc$table_ident)
   sql_updates <- modifier_to_sql( m
                                 , table = as.character(tc$table_ident)
-                                , con = con)
+                                , con = con
+                                , key = key
+                                )
 
   working <- logical(length = length(sql_updates))
   # reconstruct the names of the modifiers...

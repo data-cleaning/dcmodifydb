@@ -13,17 +13,18 @@
 #' @param x `dcmodify::modifier()` object with rules to be written
 #' @param table either a [dplyr::tbl()] object or a `character` with table name
 #' @param con optional, when `table` is a character, a dbi connection.
+#' @param key `character` column names that identify the  rows.
 #' @param file to which the sql will be written.
 #' @param ... not used
 #' @return `character` sql script with all statements.
 #' @importFrom validate description label origin
 #' @example ./example/dump_sql.R
 #' @family sql translation
-dump_sql <- function(x, table, con = NULL, file = stdout(), ...){
+dump_sql <- function(x, table, con = NULL, file = stdout(), key = NULL, ...){
   tc <- get_table_con(table, con, copy=FALSE)
 
   alt <- alter_stmt(x, tc$table, tc$table_ident, con = con)
-  sql <- modifier_to_sql(x, tc$table)
+  sql <- modifier_to_sql(x, tc$table, key = key)
 
   # TODO write expression!
 

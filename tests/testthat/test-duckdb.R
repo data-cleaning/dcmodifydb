@@ -14,8 +14,8 @@ describe("Test against duckdb", {
 
     m <- modifier(.file = system.file("db/corrections.yml", package="dcmodifydb"))
 
-    person_c <- modify(person_sqlite, m, copy=FALSE)
-    person_dd_c <- modify(person_dd, m, copy=FALSE)
+    person_c <- modify(person_sqlite, m, copy=FALSE, key = "id")
+    person_dd_c <- modify(person_dd, m, copy=FALSE, key = "id")
     expect_equal(as.data.frame(person_dd_c), as.data.frame(person_c))
     DBI::dbDisconnect(con, shutdown=TRUE)
  })
@@ -27,6 +27,8 @@ describe("Test against duckdb", {
    skip_if_not_installed("duckdb")
    con <- DBI::dbConnect(duckdb(), dbdir=":memory:")
 
+   mtcars$name <- rownames(mtcars)
+
    mtcars_dd <- dplyr::copy_to(con, mtcars, overwrite=TRUE)
    mtcars_sqlite <- do.call(dbplyr::memdb_frame, as.list(mtcars))
    m <- modifier( if (cyl == 6) {
@@ -37,8 +39,8 @@ describe("Test against duckdb", {
      new_gear <- NA
    })
 
-   mtcars_dd_c <- modify(mtcars_dd, m, copy = FALSE)
-   mtcars_sqlite_c <- modify(mtcars_sqlite, m, copy = FALSE)
+   mtcars_dd_c <- modify(mtcars_dd, m, copy = FALSE, key = "name")
+   mtcars_sqlite_c <- modify(mtcars_sqlite, m, copy = FALSE, key = "name")
    expect_equal(as.data.frame(mtcars_dd_c), as.data.frame(mtcars_sqlite_c))
    DBI::dbDisconnect(con, shutdown=TRUE)
  })
