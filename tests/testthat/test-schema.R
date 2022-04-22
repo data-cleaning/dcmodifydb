@@ -6,7 +6,7 @@ library(dcmodify)
 describe("Schema's working", {
   con <- dbConnect(SQLite())
   tmp <- tempfile()
-  schema <- dbConnect(SQLite(), db=tmp)
+  schema <- dbConnect(SQLite(), dbname=tmp)
 
   DBI::dbExecute(con, sprintf("ATTACH '%s' as 'schema'", tmp))
   dbWriteTable(schema, "iris", iris, overwrite=TRUE)

@@ -42,10 +42,17 @@ WHERE COALESCE(`gear` > 3.0,1);"))
   it("generates update statements",{
     m <- modifier( gear[is.na(gear)] <- 0L)
     sql <- modifier_to_sql(m, tbl_mtcars)
-    expect_equal(sql[[1]], sql(
+    if (packageVersion("dbplyr") <= "2.1.1") {
+      expect_equal(sql[[1]], sql(
 "UPDATE `mtcars`
 SET `gear` = 0
 WHERE ((`gear`) IS NULL);"))
+    } else {
+      expect_equal(sql[[1]], sql(
+"UPDATE `mtcars`
+SET `gear` = 0
+WHERE (`gear` IS NULL);"))
+    }
   })
 
 })
