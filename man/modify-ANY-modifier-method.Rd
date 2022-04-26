@@ -7,6 +7,7 @@
 \S4method{modify}{ANY,modifier}(
   dat,
   x,
+  key = NULL,
   copy = NULL,
   transaction = !isTRUE(copy),
   ignore_nw = FALSE,
@@ -17,6 +18,8 @@
 \item{dat}{\code{\link[=tbl_sql]{tbl_sql()}} object, table in a SQL database}
 
 \item{x}{\code{dcmodify::modifier()} object.}
+
+\item{key}{\code{character} names of the key columns}
 
 \item{copy}{if \code{TRUE} (default), modify copy of table}
 
@@ -52,25 +55,34 @@ library(DBI)
 library(dcmodify)
 library(dcmodifydb)
 
-# silly modification rules
-m <- modifier( if (cyl == 6)  gear <- 10
-             , gear[cyl == 4] <- 0  # this R syntax works too :-)
-             , if (gear == 3) cyl <- 2
-             )
+# data with "errors"
+print(person)
 
-# setting up a table in the database
+# setting up a database table
 con <- dbConnect(RSQLite::SQLite())
-dbWriteTable(con, "mtcars", mtcars[,c("cyl", "gear")])
-tbl_mtcars <- dplyr::tbl(con, "mtcars")
+person_tbl <- copy_to(con, person)
+# or
+# dbWriteTable(con, "person", person)
+# person_tbl <- tbl(con, "person")
+print(person_tbl)
 
-# "Houston, we have a table"
-head(tbl_mtcars)
+# make some modification rules
+m <- modifier(
+  if (is.na(cigarettes) && smokes == "no")  cigarettes = 0,
+  if (age < 14) age = mean(age, na.rm=TRUE)
+)
 
-# lets modify on a copy of the table...
-tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
 
-# and gear has changed...
-head(tbl_m)
+# lets modify on a temporary copy of the table..
+# this copy is only visible to the current connection
+person_m <- modify(person_tbl, m, key="id", copy=TRUE)
+
+
+# and cigarretes and age has changed has changed...
+person_m
+
+# If one certain about the changes, then you can overwrite the table with the changes
+person_m <- modify(person_tbl, m, key="id", copy=FALSE)
 
 dbDisconnect(con)
 }

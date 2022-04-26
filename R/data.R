@@ -5,6 +5,7 @@
 #'
 #' @format A data frame with x rows and variables:
 #' \describe{
+#'   \item{id}{identifier of a person (unique)}
 #'   \item{income}{monthly income, in US dollars}
 #'   \item{age}{age of a person in year}
 #'   \item{gender}{gender of a person}

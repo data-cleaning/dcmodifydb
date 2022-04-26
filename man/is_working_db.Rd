@@ -4,12 +4,14 @@
 \alias{is_working_db}
 \title{Rule check on the database}
 \usage{
-is_working_db(m, tab, n = 2, warn = TRUE, sql_warn = FALSE)
+is_working_db(m, tab, key, n = 2, warn = TRUE, sql_warn = FALSE)
 }
 \arguments{
 \item{m}{\code{\link[=modifier]{modifier()}} object}
 
-\item{tab}{tbl object}
+\item{tab}{\code{tbl} object}
+
+\item{key}{\code{character} with column names that identify a row}
 
 \item{n}{number of records to use in this check}
 
@@ -28,7 +30,7 @@ many scenario's but not all R statements can be translated into SQL.
 This function checks whether a modification rule can be executed on the database.
 }
 \examples{
-person <- dbplyr::memdb_frame(age = 12, salary = 3000)
+person <- dbplyr::memdb_frame(id="dirk", age = 12, salary = 3000)
 
 library(dcmodify)
 
@@ -37,11 +39,11 @@ correction_rules <- modifier( if (age < 16) salary = 0
                             )
 
 # second rule is not working, because retired is not available
-is_working_db(correction_rules, person, warn = FALSE)
+is_working_db(correction_rules, person, key="id", warn = FALSE)
 
 # show warnings (default)
-is_working_db(correction_rules, person, warn = TRUE)
+is_working_db(correction_rules, person, key="id", warn = TRUE)
 
 # show the sql statements that are not working
-is_working_db(correction_rules, person, warn = FALSE, sql_warn = TRUE)
+is_working_db(correction_rules, person, key = "id", warn = FALSE, sql_warn = TRUE)
 }

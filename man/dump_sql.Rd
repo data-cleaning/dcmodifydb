@@ -4,7 +4,7 @@
 \alias{dump_sql}
 \title{Show generated sql}
 \usage{
-dump_sql(x, table, con = NULL, file = stdout(), ...)
+dump_sql(x, table, con = NULL, file = stdout(), key = NULL, ...)
 }
 \arguments{
 \item{x}{\code{dcmodify::modifier()} object with rules to be written}
@@ -14,6 +14,8 @@ dump_sql(x, table, con = NULL, file = stdout(), ...)
 \item{con}{optional, when \code{table} is a character, a dbi connection.}
 
 \item{file}{to which the sql will be written.}
+
+\item{key}{\code{character} column names that identify the  rows.}
 
 \item{...}{not used}
 }
@@ -43,7 +45,7 @@ rules <- modifier(.file = system.file("db/corrections.yml", package="dcmodifydb"
 print(rules)
 
 # show sql code generated from the rules.
-dump_sql(rules, person)
+dump_sql(rules, person, key = "id")
 }
 \seealso{
 Other sql translation: 

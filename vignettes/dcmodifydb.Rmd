@@ -68,38 +68,41 @@ knitr::kable(person)
 
 ```{r}
 con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-dplyr::copy_to(con, person)
+copy_to(con, person)
 ```
 
 
 We now retrieve a handle to the person table using `dplyr`
 
 ```{r}
-person_tbl <- dplyr::tbl(con, "person")
+person_tbl <- tbl(con, "person")
 person_tbl
 ```
 
 The person dataset clearly contains some errors that can be corrected. 
 We specify the corrections using modifier rules and apply them directly with 
-the function`modify_so`.
+the function `modify`.
 
 First we correct that children can not have an income and that year must be a
 long year.
 
 ```{r}
-library(dcmodify) # needed for modifying rules
-library(dcmodifydb) # needed to translate the rules
-modify_so( person_tbl
-         , if (age < 16) income = 0
-         , if (year < 25) year = year + 2000
-         )
+library(dcmodify) # needed for specifying correction rules
+library(dcmodifydb) # needed to translate the rules into SQL
+modify( person_tbl,
+        modifier( if (age < 16) income = 0
+                , if (year < 25) year = year + 2000
+                ),
+        key = "id",
+      )
 ```
 
 Note that the corrections are made on a copy of the table by default, to avoid 
-accidents with the data.
+accidents with the data and that we need to specify with `key` the column(s) that identify 
+a row in the database table.
 
 A better approach than directly applying corrections is to store the rules 
-in a `modifier` object and apply them in a separate step to a data base table.
+in a `modifier` object first and apply them in a separate step to a data base table.
 
 This makes it easier to maintain, use and document a set of rules.
 With `dcmodify` one can specify rules with the function `modifier`:
@@ -138,7 +141,7 @@ set of labels.
 
 ```{r}
 # modify a copy of the table
-modify(person_tbl, m, copy = TRUE)
+modify(person_tbl, m, key="id", copy = TRUE)
 ```
 
 Note that the rules are executed sequentially, in the order that they are gven.
@@ -169,12 +172,12 @@ We can load these rules with:
 
 ```{r, eval = FALSE}
 m <- modifier(.file = "corrections.yml")
-modify(person_tbl, m, copy = TRUE)
+modify(person_tbl, m, key="id", copy = TRUE)
 ```
 
 ```{r, echo = FALSE}
 m <- modifier(.file = system.file("db/corrections.yml", package="dcmodifydb"))
-modify(person_tbl, m, copy = TRUE)
+modify(person_tbl, m, key="id", copy = TRUE)
 ```
 
 `modify` translates the modification rules into SQL code and executes the sql 
@@ -182,13 +185,13 @@ queries on the database. For documentation or implementation purpose it can
 be useful to see the generated sql code, with the documented rules. 
 
 ```{r dump, eval=FALSE}
-dump_sql(m, person_tbl, file = "corrections.sql")
+dump_sql(m, person_tbl, key = "id", file = "corrections.sql")
 ```
 
 _corrections.sql_:
 ```SQL
 ```{r, eval=TRUE, echo=FALSE, results='asis'}
-dump_sql(m, person_tbl)
+dump_sql(m, person_tbl, key = "id")
 ```
 
 ```

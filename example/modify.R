@@ -2,30 +2,33 @@ library(DBI)
 library(dcmodify)
 library(dcmodifydb)
 
-# silly modification rules
-m <- modifier( if (cyl == 6)  gear <- 10
-             , gear[cyl == 4] <- 0  # this R syntax works too :-)
-             , if (gear == 3) cyl <- 2
-             )
+# data with "errors"
+print(person)
 
-# setting up a table in the database
+# setting up a database table
 con <- dbConnect(RSQLite::SQLite())
-mtcars$name <- rownames(mtcars)
-dbWriteTable(con, "mtcars", mtcars[,c("name","cyl", "gear")])
-tbl_mtcars <- dplyr::tbl(con, "mtcars")
+person_tbl <- copy_to(con, person)
+# or
+# dbWriteTable(con, "person", person)
+# person_tbl <- tbl(con, "person")
+print(person_tbl)
 
-# "Houston, we have a table"
-head(tbl_mtcars)
+# make some modification rules
+m <- modifier(
+  if (is.na(cigarettes) && smokes == "no")  cigarettes = 0,
+  if (age < 14) age = mean(age, na.rm=TRUE)
+)
+
 
 # lets modify on a temporary copy of the table..
 # this copy is only visible to the current connection
-tbl_m <- modify(tbl_mtcars, m, key="name", copy=TRUE)
+person_m <- modify(person_tbl, m, key="id", copy=TRUE)
 
 
-# and gear has changed...
-head(tbl_m)
+# and cigarretes and age has changed has changed...
+person_m
 
 # If one certain about the changes, then you can overwrite the table with the changes
-tbl_m <- modify(tbl_mtcars, m, key = "name", copy=FALSE)
+person_m <- modify(person_tbl, m, key="id", copy=FALSE)
 
 dbDisconnect(con)

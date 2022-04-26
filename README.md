@@ -43,45 +43,54 @@ library(DBI)
 library(dcmodify)
 library(dcmodifydb)
 
-# silly modification rules
-m <- modifier( if (cyl == 6)  gear <- 10
-             , gear[cyl == 4] <- 0  # this R syntax works too :-)
-             , if (gear == 3) cyl <- 2
-             )
+# data with "errors"
+print(person)
+#>   id income age gender year smokes cigarettes
+#> 1  1   2000  12      M 2020     no         10
+#> 2  2   2010  14      f 2019    yes          4
+#> 3  3   2010  25      v   19     no         NA
 
-# setting up a table in the database
+# setting up a database table
 con <- dbConnect(RSQLite::SQLite())
-dbWriteTable(con, "mtcars", mtcars[,c("cyl", "gear")])
-tbl_mtcars <- dplyr::tbl(con, "mtcars")
-
-# "Houston, we have a table"
-head(tbl_mtcars)
-#> # Source:   lazy query [?? x 2]
+person_tbl <- copy_to(con, person)
+# or
+# dbWriteTable(con, "person", person)
+# person_tbl <- tbl(con, "person")
+print(person_tbl)
+#> # Source:   table<person> [?? x 7]
 #> # Database: sqlite 3.37.2 []
-#>     cyl  gear
-#>   <dbl> <dbl>
-#> 1     6     4
-#> 2     6     4
-#> 3     4     4
-#> 4     6     3
-#> 5     8     3
-#> 6     6     3
+#>      id income   age gender  year smokes cigarettes
+#>   <int>  <int> <int> <chr>  <int> <chr>       <int>
+#> 1     1   2000    12 M       2020 no             10
+#> 2     2   2010    14 f       2019 yes             4
+#> 3     3   2010    25 v         19 no             NA
 
-# lets modify on a copy of the table...
-tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
+# make some modification rules
+m <- modifier(
+  if (is.na(cigarettes) && smokes == "no"){
+    cigarettes = 0
+  },
+  if (age < 14) { age = mean(age, na.rm=TRUE)}
+)
 
-# and gear has changed...
-head(tbl_m)
-#> # Source:   lazy query [?? x 2]
+
+# lets modify on a temporary copy of the table..
+# this copy is only visible to the current connection
+person_m <- modify(person_tbl, m, key="id", copy=TRUE)
+
+
+# and cigarretes and age has changed has changed...
+person_m
+#> # Source:   table<dcmodifydb_3319833> [?? x 7]
 #> # Database: sqlite 3.37.2 []
-#>     cyl  gear
-#>   <dbl> <dbl>
-#> 1     6    10
-#> 2     6    10
-#> 3     4     0
-#> 4     6    10
-#> 5     2     3
-#> 6     6    10
+#>      id income   age gender  year smokes cigarettes
+#>   <int>  <int> <int> <chr>  <int> <chr>       <int>
+#> 1     1   2000    17 M       2020 no             10
+#> 2     2   2010    14 f       2019 yes             4
+#> 3     3   2010    25 v         19 no              0
+
+# If one certain about the changes, then you can overwrite the table with the changes
+person_m <- modify(person_tbl, m, key="id", copy=FALSE)
 
 dbDisconnect(con)
 ```
@@ -156,11 +165,11 @@ print(m)
 
 ``` r
 # setup the data
-"age, income
-  11,   2000
- 150,    300
-  25,   2000
- -10,   2000
+"id, age, income
+  A,  11,   2000
+  B, 150,    300
+  C,  25,   2000
+  D, -10,   2000
 " -> csv
 income <- read.csv(text = csv, strip.white = TRUE)
 dbWriteTable(con, "income", income)
@@ -168,31 +177,31 @@ tbl_income <- dplyr::tbl(con, "income")
 
 # this is the table in the data base
 tbl_income
-#> # Source:   table<income> [?? x 2]
+#> # Source:   table<income> [?? x 3]
 #> # Database: sqlite 3.37.2 []
-#>     age income
-#>   <int>  <int>
-#> 1    11   2000
-#> 2   150    300
-#> 3    25   2000
-#> 4   -10   2000
+#>   id      age income
+#>   <chr> <int>  <int>
+#> 1 A        11   2000
+#> 2 B       150    300
+#> 3 C        25   2000
+#> 4 D       -10   2000
 
 # and now after modification
-modify(tbl_income, m, copy = FALSE) 
-#> # Source:   table<income> [?? x 2]
+modify(tbl_income, m, key="id", copy = FALSE) 
+#> # Source:   table<income> [?? x 5]
 #> # Database: sqlite 3.37.2 []
-#>     age income retired age_class
-#>   <int>  <int>   <int> <chr>    
-#> 1    11      0       0 child    
-#> 2   130    300       1 adult    
-#> 3    25   2000       0 adult    
-#> 4    NA   2000      NA <NA>
+#>   id      age income retired age_class
+#>   <chr> <int>  <int>   <int> <chr>    
+#> 1 A        11      0       0 child    
+#> 2 B       130    300       1 adult    
+#> 3 C        25   2000       0 adult    
+#> 4 D        NA   2000      NA <NA>
 ```
 
 Generated sql can be written with `dump_sql`
 
 ``` r
-dump_sql(m, tbl_income, file = "modify.sql")
+dump_sql(m, tbl_income, key = "id", file = "modify.sql")
 ```
 
 modify.sql:
@@ -205,7 +214,7 @@ modify.sql:
 -- dplyr version: 1.0.8
 -- dbplyr version: 2.1.1
 -- from: 'example/example.yml'
--- date: 2022-03-11
+-- date: 2022-04-26
 -- -------------------------------------
 
 
@@ -220,47 +229,70 @@ ADD `age_class` TEXT;
 -- Cap the age at 130
 -- 
 -- R expression: if (age > 130) age = 130
-UPDATE `income`
-SET `age` = 130
-WHERE `age` > 130.0;
+UPDATE `income` AS T
+SET `age` = U.`age`
+FROM
+(SELECT `id`, 130 AS `age`
+FROM `income`) AS U
+WHERE T.`id` = U.`id`
+  AND T.`age` > 130.0;
 
 -- M2: Unknown age
 -- Negative Age, nah...
 -- (set to NA)
 -- 
 -- R expression: is.na(age) <- age < 0
-UPDATE `income`
-SET `age` = NULL
-WHERE `age` < 0.0;
+UPDATE `income` AS T
+SET `age` = U.`age`
+FROM
+(SELECT `id`, NULL AS `age`
+FROM `income`) AS U
+WHERE T.`id` = U.`id`
+  AND T.`age` < 0.0;
 
 -- M3: No Child Labor
 -- Children should not work. (R syntax)
 -- Set income to zero for children.
 -- 
 -- R expression: income[age < 12] <- 0
-UPDATE `income`
-SET `income` = 0.0
-WHERE `age` < 12.0;
+UPDATE `income` AS T
+SET `income` = U.`income`
+FROM
+(SELECT `id`, 0.0 AS `income`
+FROM `income`) AS U
+WHERE T.`id` = U.`id`
+  AND T.`age` < 12.0;
 
 -- M4: Retired
 -- Derive a new variable...
 -- 
 -- R expression: retired <- age > 67
-UPDATE `income`
-SET `retired` = `age` > 67.0
-;
+UPDATE `income` AS T
+SET `retired` = U.`retired`
+FROM
+(SELECT `id`, `age` > 67.0 AS `retired`
+FROM `income`) AS U
+WHERE T.`id` = U.`id`;
 
 -- M5: Age class
 -- Derive a new variable with if else
 -- 
 -- R expression: if (age < 18) age_class = "child" else age_class = "adult"
-UPDATE `income`
-SET `age_class` = 'child'
-WHERE `age` < 18.0;
+UPDATE `income` AS T
+SET `age_class` = U.`age_class`
+FROM
+(SELECT `id`, 'child' AS `age_class`
+FROM `income`) AS U
+WHERE T.`id` = U.`id`
+  AND T.`age` < 18.0;
 
-UPDATE `income`
-SET `age_class` = 'adult'
-WHERE NOT(`age` < 18.0);
+UPDATE `income` AS T
+SET `age_class` = U.`age_class`
+FROM
+(SELECT `id`, 'adult' AS `age_class`
+FROM `income`) AS U
+WHERE T.`id` = U.`id`
+  AND NOT(T.`age` < 18.0);
 ```
 
 ``` r

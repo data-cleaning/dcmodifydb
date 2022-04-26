@@ -4,7 +4,7 @@
 \alias{modifier_to_sql}
 \title{Utility function to extract SQL statements}
 \usage{
-modifier_to_sql(x, table, con = NULL)
+modifier_to_sql(x, table, con = NULL, key)
 }
 \arguments{
 \item{x}{\code{dcmodify::modifier()} object}
@@ -12,6 +12,8 @@ modifier_to_sql(x, table, con = NULL)
 \item{table}{table object}
 
 \item{con}{optional connection}
+
+\item{key}{\code{character} with column names that identify a row}
 }
 \value{
 \code{list} of sql UPDATE statements.

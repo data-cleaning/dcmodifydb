@@ -1,4 +1,7 @@
-# dcmodifydb 0.3.0
+# dcmodifydb 0.4.0
+
+* Breaking change: a key has to be specified in `modify` (and others) to support
+non-trivial corrections e.g.`mean` and others.
 
 * Improved messages for non-working rules (#1) Thanks to Marlou van de Sande
 

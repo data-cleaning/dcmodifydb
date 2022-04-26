@@ -88,7 +88,7 @@ update_stmt <- function(x, table, table_ident, con, key, ..., na.condition=FALSE
     g_t <- prefix_var(g, vars = all.vars(g))
 
     if (isTRUE(na.condition)){
-      translate_sql(coalesce(!!g_t, 1L), con = con)
+      translate_sql(dplyr::coalesce(!!g_t, 1L), con = con)
     } else {
       translate_sql(!!g_t, con = con)
     }

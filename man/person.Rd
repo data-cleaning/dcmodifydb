@@ -7,6 +7,7 @@
 \format{
 A data frame with x rows and variables:
 \describe{
+\item{id}{identifier of a person (unique)}
 \item{income}{monthly income, in US dollars}
 \item{age}{age of a person in year}
 \item{gender}{gender of a person}
@@ -31,11 +32,13 @@ The datasethas missing values
 library(dcmodify)
 rules <- modifier(.file = system.file("db/corrections.yml", package="dcmodifydb"))
 
-con <- DBI::dbConnect(RSQLite::SQLite(), dbname=system.file("db/person.db", package="dcmodifydb"))
+con <- DBI::dbConnect( RSQLite::SQLite()
+                     , dbname=system.file("db/person.db", package="dcmodifydb")
+                     )
 person <- dplyr::tbl(con, "person")
 print(person)
 
-person2 <- modify(person, rules, copy=TRUE)
+person2 <- modify(person, rules, key="id", copy=TRUE)
 print(person2)
 }
 \keyword{datasets}
