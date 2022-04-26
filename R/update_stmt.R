@@ -100,7 +100,7 @@ update_stmt <- function(x, table, table_ident, con, key, ..., na.condition=FALSE
                       , sql(paste(where_clause, collapse = "\n  AND "))
                       , con = con
                       )
-    t_q <- DBI::dbQuoteIdentifier(con, "T")
+    t_q <- dbplyr::escape(ident("T"), con=con)
     where <- gsub(t_q, "T", where, fixed=TRUE)
     where <- sql(where)
   }
@@ -109,7 +109,7 @@ update_stmt <- function(x, table, table_ident, con, key, ..., na.condition=FALSE
   s <- build_sql("UPDATE ",table_ident," AS T\n",
             "SET ", col_name," = U.", col_name  ,"\n",
             "FROM\n",
-            "(",sql_render(qry),") AS U\n",
+            "(",dbplyr::sql_render(qry),") AS U\n",
             where,
             ";", con = con)
   s

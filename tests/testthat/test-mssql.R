@@ -9,16 +9,24 @@ describe("simulate mssql", {
   asgns <- get_assignments(m)
   u1 <- update_stmt(asgns$M1, d, ident("d"), con = con, key = "id")
   expect_equal(u1, sql(
-"UPDATE `d`
-SET `x` = NULL
-WHERE `x` > 1.0;"
+"UPDATE `d` AS T
+SET `x` = U.`x`
+FROM
+(SELECT `id`, NULL AS `x`
+FROM `df`) AS U
+WHERE T.`id` = U.`id`
+  AND T.`x` > 1.0;"
   ))
 
   u2 <- update_stmt(asgns$M2, d, ident("d"), con = con, key = "id")
   expect_equal(u2, sql(
-"UPDATE `d`
-SET `x` = 2.0
-WHERE `y` > 1.0;"
+"UPDATE `d` AS T
+SET `x` = U.`x`
+FROM
+(SELECT `id`, 2.0 AS `x`
+FROM `df`) AS U
+WHERE T.`id` = U.`id`
+  AND T.`y` > 1.0;"
   ))
 
 })
