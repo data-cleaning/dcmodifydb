@@ -17,9 +17,13 @@ describe("update",{
                  )
     sql <- modifier_to_sql(m, tbl_mtcars, key  = "name")
     expect_equal(sql[[1]], sql(
-"UPDATE `mtcars`
-SET `carb` = 11
-WHERE `gear` > 3.0;"))
+"UPDATE `mtcars` AS T
+SET `carb` = U.`carb`
+FROM
+(SELECT `name`, 11 AS `carb`
+FROM `mtcars`) AS U
+WHERE T.`name` = U.`name`
+  AND T.`gear` > 3.0;"))
   })
 
   it("generates update statements",{
@@ -36,18 +40,26 @@ WHERE `gear` > 3.0;"))
                          )
 
     expect_equal(update, sql(
-"UPDATE `na.c`
-SET `carb` = 11.0
-WHERE COALESCE(`gear` > 3.0,1);"))
+"UPDATE `na.c` AS T
+SET `carb` = U.`carb`
+FROM
+(SELECT `name`, 11.0 AS `carb`
+FROM `na.c`) AS U
+WHERE T.`name` = U.`name`
+  AND COALESCE(T.`gear` > 3.0, 1);"))
   })
 
   it("generates update statements",{
     m <- modifier( gear[is.na(gear)] <- 0L)
     sql <- modifier_to_sql(m, tbl_mtcars, key = "name")
     expect_equal(sql[[1]], sql(
-"UPDATE `mtcars`
-SET `gear` = 0
-WHERE ((`gear`) IS NULL);"))
+"UPDATE `mtcars` AS T
+SET `gear` = U.`gear`
+FROM
+(SELECT `name`, 0 AS `gear`
+FROM `mtcars`) AS U
+WHERE T.`name` = U.`name`
+  AND ((T.`gear`) IS NULL);"))
   })
 
 })

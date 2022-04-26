@@ -84,11 +84,11 @@ print(m)
 
 ```{r}
 # setup the data
-"age, income
-  11,   2000
- 150,    300
-  25,   2000
- -10,   2000
+"id, age, income
+  A,  11,   2000
+  B, 150,    300
+  C,  25,   2000
+  D, -10,   2000
 " -> csv
 income <- read.csv(text = csv, strip.white = TRUE)
 dbWriteTable(con, "income", income)
@@ -98,19 +98,19 @@ tbl_income <- dplyr::tbl(con, "income")
 tbl_income
 
 # and now after modification
-modify(tbl_income, m, copy = FALSE) 
+modify(tbl_income, m, key="id", copy = FALSE) 
 ```
 
 Generated sql can be written with `dump_sql`
 
 ```{r, eval=FALSE}
-dump_sql(m, tbl_income, file = "modify.sql")
+dump_sql(m, tbl_income, key = "id", file = "modify.sql")
 ```
 
 modify.sql:
 ```sql
 ```{r, echo=FALSE, results='asis'}
-dump_sql(m, tbl_income)
+dump_sql(m, tbl_income, key = "id")
 ```
 ```
 

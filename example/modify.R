@@ -10,7 +10,8 @@ m <- modifier( if (cyl == 6)  gear <- 10
 
 # setting up a table in the database
 con <- dbConnect(RSQLite::SQLite())
-dbWriteTable(con, "mtcars", mtcars[,c("cyl", "gear")])
+mtcars$name <- rownames(mtcars)
+dbWriteTable(con, "mtcars", mtcars[,c("name","cyl", "gear")])
 tbl_mtcars <- dplyr::tbl(con, "mtcars")
 
 # "Houston, we have a table"
@@ -18,13 +19,13 @@ head(tbl_mtcars)
 
 # lets modify on a temporary copy of the table..
 # this copy is only visible to the current connection
-tbl_m <- modify(tbl_mtcars, m, copy=TRUE)
+tbl_m <- modify(tbl_mtcars, m, key="name", copy=TRUE)
 
 
 # and gear has changed...
 head(tbl_m)
 
 # If one certain about the changes, then you can overwrite the table with the changes
-tbl_m <- modify(tbl_mtcars, m, copy=FALSE)
+tbl_m <- modify(tbl_mtcars, m, key = "name", copy=FALSE)
 
 dbDisconnect(con)
