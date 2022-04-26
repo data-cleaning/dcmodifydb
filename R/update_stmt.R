@@ -11,10 +11,10 @@ update_stmt <- function(x, table, table_ident, con, key, ..., na.condition=FALSE
   varname <- as.character(x[[2]])
   value <- do.call(translate_sql, list(x[[3]], con = con))
 
-  # value <- list(x[[3]])
-  # names(value) <- varname
-  # dplyr::transmute(table, !!!keylist, !!!value)
-  # browser()
+  .value <- list(x[[3]])
+  names(.value) <- varname
+  e <- dplyr::transmute(table, !!!keylist, !!!.value)
+  #browser()
 
   where <- NULL
 
@@ -33,7 +33,19 @@ update_stmt <- function(x, table, table_ident, con, key, ..., na.condition=FALSE
     where <- build_sql("WHERE ", where, con = con)
     where <- sql(where)
   }
-  build_sql("UPDATE ", table_ident
+
+  # browser()
+  uvar <- ident(paste0("U.", varname))
+  s <- build_sql("UPDATE ", table_ident, sql(" AS T")
+            ,  "\n", "SET ", ident(varname)
+            ,         " = ", value
+            ,  "\n", where
+            , ";"
+            , con=con
+  )
+  # print(s)
+
+  build_sql("UPDATE ", table_ident, sql(" AS T")
             ,  "\n", "SET ", ident(varname)
             ,         " = ", value
             ,  "\n", where
