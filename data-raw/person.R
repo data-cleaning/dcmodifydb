@@ -5,6 +5,7 @@ id, income, age, gender, year, smokes, cigarettes
  1,   2000,  12,      M, 2020,     no,         10
  2,   2010,  14,      f, 2019,    yes,          4
  3,   2010,  25,      v,   19,     no,
+ 4,   1010,  65,      M,   20,    yes,
 ", strip.white=TRUE)
 
 usethis::use_data(person, overwrite = TRUE)
