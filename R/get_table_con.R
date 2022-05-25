@@ -11,7 +11,7 @@ get_table_con <- function(table, con = NULL, copy = NULL){
       warning("ignoring `con`, taking connection from `table`", call. = FALSE)
     }
 
-    if (is.null(dbplyr::remote_name(table))){
+    if (is.null(get_tbl_name(table))){
       # this is a query, so will be stored in a temporary table
       copy <- TRUE
     }
@@ -21,13 +21,13 @@ get_table_con <- function(table, con = NULL, copy = NULL){
       copy <- TRUE
     }
 
-    table_ident <- dbplyr::remote_name(table)
+    table_ident <- get_tbl_name(table)
 
     if (isTRUE(copy)){
       table_name <- random_name()
       # table_name <- random_name(table_name)
       table <- dplyr::compute(table, name = table_name)
-      table_ident <- dbplyr::remote_name(table) %||% ident(table_name)
+      table_ident <- get_tbl_name(table) %||% ident(table_name)
     }
     con <- dbplyr::remote_con(table)
   } else {

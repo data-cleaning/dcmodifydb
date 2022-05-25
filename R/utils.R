@@ -18,3 +18,13 @@ random_name <- function(name = NULL){
     a
   }
 }
+
+get_tbl_name <- function(x){
+  name <- dbplyr::remote_name(x)
+  if (is.null(name)){
+    if (x$ops$name == "ungroup"){
+      name <- x$ops$x$x
+    }
+  }
+  name
+}
