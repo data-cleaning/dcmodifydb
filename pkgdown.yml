@@ -1,9 +1,9 @@
 pandoc: 2.7.3
-pkgdown: 2.0.2
+pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
   dcmodifydb: dcmodifydb.html
   scenarios: scenarios.html
   syntax: syntax.html
-last_built: 2022-04-13T11:44Z
+last_built: 2022-05-25T15:28Z
 
