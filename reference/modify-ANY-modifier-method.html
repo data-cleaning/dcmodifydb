@@ -82,20 +82,33 @@ For more information see the vignettes.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>dat</dt>
 <dd><p><code>tbl_sql()</code> object, table in a SQL database</p></dd>
+
+
 <dt>x</dt>
 <dd><p><code><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">dcmodify::modifier()</a></code> object.</p></dd>
+
+
 <dt>copy</dt>
 <dd><p>if <code>TRUE</code> (default), modify copy of table</p></dd>
+
+
 <dt>transaction</dt>
 <dd><p>if <code>TRUE</code> use one transaction for all modifications.</p></dd>
+
+
 <dt>ignore_nw</dt>
 <dd><p>if <code>TRUE</code> non-working rules are ignored</p></dd>
+
+
 <dt>...</dt>
 <dd><p>unused</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>tbl_sql()</code> object, referencing the modified table object.</p>
+    
+
+<p><code>tbl_sql()</code> object, referencing the modified table object.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -127,7 +140,7 @@ all modifications are rolled back.</p></li>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># "Houston, we have a table"</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl_mtcars</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:   SQL [6 x 2]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database: sqlite 3.38.5 []</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cyl  gear</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -138,12 +151,14 @@ all modifications are rolled back.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     8     3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6     3</span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># lets modify on a copy of the table...</span></span>
+<span class="r-in"><span class="co"># lets modify on a temporary copy of the table..</span></span>
+<span class="r-in"><span class="co"># this copy is only visible to the current connection</span></span>
 <span class="r-in"><span class="va">tbl_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">tbl_mtcars</span>, <span class="va">m</span>, copy<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># and gear has changed...</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl_m</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:   lazy query [?? x 2]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Source:   SQL [6 x 2]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Database: sqlite 3.38.5 []</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cyl  gear</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -153,6 +168,9 @@ all modifications are rolled back.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     6    10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     2     3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     6    10</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># If one certain about the changes, then you can overwrite the table with the changes</span></span>
+<span class="r-in"><span class="va">tbl_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">tbl_mtcars</span>, <span class="va">m</span>, copy<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
 </code></pre></div>
@@ -166,7 +184,7 @@ all modifications are rolled back.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer></div>
