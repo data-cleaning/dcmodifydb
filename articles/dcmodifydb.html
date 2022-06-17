@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">dcmodifydb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,7 +176,7 @@
          , <span class="kw">if</span> <span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">25</span><span class="op">)</span> <span class="va">year</span> <span class="op">=</span> <span class="va">year</span> <span class="op">+</span> <span class="fl">2000</span>
          <span class="op">)</span>
 <span class="co">#&gt; Warning: `copy` not specified, setting `copy=TRUE`, working on copy of table.</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_629401&gt; [4 x 6]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_9036666&gt; [4 x 6]</span></span>
 <span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.5 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -231,7 +231,7 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># modify a copy of the table</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_1537172&gt; [4 x 7]</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_9169039&gt; [4 x 7]</span></span>
 <span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.5 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes ageclass</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
@@ -281,7 +281,7 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modifier.html" class="external-link">modifier</a></span><span class="op">(</span>.file <span class="op">=</span> <span class="st">"corrections.yml"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/dcmodify/man/modify.html" class="external-link">modify</a></span><span class="op">(</span><span class="va">person_tbl</span>, <span class="va">m</span>, copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_4674204&gt; [4 x 7]</span></span>
+<pre><code><span class="co">#&gt; <span style="color: #949494;"># Source:   table&lt;dcmodifydb_2443559&gt; [4 x 7]</span></span>
 <span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.38.5 [:memory:]</span></span>
 <span class="co">#&gt;   income   age gender  year smokes cigarettes ageclass</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
@@ -296,7 +296,7 @@
 <div class="sourceCode" id="cb14"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1"></a><span class="co">-- -------------------------------------</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="co">-- Generated with dcmodifydb, do not edit</span></span>
 <span id="cb14-3"><a href="#cb14-3"></a><span class="co">-- dcmodify version: 0.1.9</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a><span class="co">-- dcmodifydb version: 0.3.0.9002</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="co">-- dcmodifydb version: 0.3.1</span></span>
 <span id="cb14-5"><a href="#cb14-5"></a><span class="co">-- dplyr version: 1.0.9</span></span>
 <span id="cb14-6"><a href="#cb14-6"></a><span class="co">-- dbplyr version: 2.2.0</span></span>
 <span id="cb14-7"><a href="#cb14-7"></a><span class="co">-- from: '/Users/runner/work/_temp/Library/dcmodifydb/db/corrections.yml'</span></span>
