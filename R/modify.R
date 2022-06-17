@@ -19,6 +19,7 @@
 #' all modifications are rolled back.
 #'
 #' @importFrom dcmodify modify
+#' @importFrom methods setMethod
 #' @param dat [tbl_sql()] object, table in a SQL database
 #' @param x `dcmodify::modifier()` object.
 #' @param copy if `TRUE` (default), modify copy of table

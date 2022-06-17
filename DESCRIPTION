@@ -16,7 +16,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
 Depends: R (>= 4.0.0)
 Suggests: 
     testthat (>= 3.0.0),
@@ -29,8 +28,9 @@ Imports:
     dbplyr,
     DBI,
     dcmodify (>= 0.1.9),
-    validate, 
+    validate,
     methods
 URL: https://github.com/data-cleaning/dcmodifydb
 BugReports: https://github.com/data-cleaning/dcmodifydb/issues
 VignetteBuilder: knitr
+RoxygenNote: 7.2.0
