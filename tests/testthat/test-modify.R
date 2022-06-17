@@ -41,11 +41,9 @@ describe("modify",{
     d <- tbl_memdb(data.frame(x = 1:2), "d4")
     m <- modifier(if (x > 1) x <- 1, if (y > 2) x <- 2)
 
-    expect_error({
-      expect_warning({
+    expect_snapshot({
         d_m <- modify(d, m, copy = FALSE)
-      })
-    })
+    }, error = TRUE)
 
     # check if the table in the db is really changed...
     expect_equal(as.data.frame(d), data.frame(x = c(1,2)))

@@ -2,7 +2,7 @@ describe("parse", {
   it("rewrites assigns to selections",{
     e <- quote(x[x>10] <- 10)
     e_rw <- rewrite_asign_select(e)
-    expect_equal(e_rw, quote(x <- 10))
+    expect_equal(e_rw, quote(x <- 10), ignore_attr=TRUE)
     expect_equal(guard(e_rw), quote(x>10))
   })
 
@@ -16,14 +16,14 @@ describe("parse", {
     e <- quote(x[x>10] <- 10)
     attr(e, "guard") <- quote(y > 0)
     e_rw <- rewrite_asign_select(e)
-    expect_equal(e_rw, quote(x <- 10))
+    expect_equal(e_rw, quote(x <- 10), ignore_attr=TRUE)
     expect_equal(guard(e_rw), quote(y > 0 & x>10))
   })
 
   it("knows is.na(x) assign",{
     e <- quote(is.na(x) <- x > 10)
     e_rw <- rewrite_asign_select(e)
-    expect_equal(e_rw, quote(x <- NA))
+    expect_equal(e_rw, quote(x <- NA), ignore_attr=TRUE)
     expect_equal(guard(e_rw), quote(x > 10))
   })
 
