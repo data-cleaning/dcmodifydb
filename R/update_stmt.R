@@ -16,9 +16,7 @@ update_stmt <- function(x, table, table_ident, con, ..., na.condition=FALSE){
 
   if (!is.null(g)){
     g <- replace_vin(g)
-    qry_f <- eval(bquote(dplyr::filter(table, .(g))))
-    qry <- dbplyr::sql_build(qry_f)
-    where <- qry$where
+    where <- dbplyr::translate_sql_(list(g), con = dbplyr::remote_con(table))
     if (isTRUE(na.condition)){
       where <- build_sql("COALESCE(",where,",1)", con = con)
     }
